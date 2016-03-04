@@ -8,7 +8,7 @@ IPP2P:RND <> IPD:3000
 '< “ALGI”[4B].SessionID[16B]
 
 Aggiunta
-Ogni peer registrato può aggiungere un file in un qualsiasi momento, mettendolo a disposizione di tutta la rete P2P. Il file è identificato da una stringa di 100B che lo descrive e sul quale è possibile effettuare una ricerca e da un identificativo md5 unico. In caso di descrizioni differenti relative allo stesso identificativo md5, l’ultima indicata sostituisce le precedenti, indipendentemente dal peer che la ha indicata. Peer differenti possono ospitare lo stesso file. Il pacchetto di risposta riporta quante versioni del file con lo stesso md5 sono presenti nella directory #copy, dopo l’aggiunta. Nel caso venga aggiunto dallo stesso peer un file con identificativo già inserito dallo stesso peer, viene solo aggiornato il nome.
+Ogni peer registrato può aggiungere un file in un qualsiasi momento, mettendolo a disposizione di tutta la rete P2P. Il file è identificato da una stringa di 100B che lo descrive e sul quale è possibile effettuare una ricerca e da un identificativo md5 unico. La stringa è completata nella sua lunghezza con spazi. In caso di descrizioni differenti relative allo stesso identificativo md5, l’ultima indicata sostituisce le precedenti, indipendentemente dal peer che la ha indicata. Peer differenti possono ospitare lo stesso file. Il pacchetto di risposta riporta quante versioni del file con lo stesso md5 sono presenti nella directory #copy, dopo l’aggiunta. Nel caso venga aggiunto dallo stesso peer un file con identificativo già inserito dallo stesso peer, viene solo aggiornato il nome.
 
 IPP2P:RND <> IPD:3000
 '> “ADDF”[4B].SessionID[16B].Filemd5[16B].Filename[100B]
