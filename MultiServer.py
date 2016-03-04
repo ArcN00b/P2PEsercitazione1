@@ -1,65 +1,58 @@
-# questo file gestisce le connessioni del server
+import select
+import socket
 
-import threading;
-import socket;
-
-# from ServerThread import ServerThread
-
-# indirizzo di rete v4
-TCP_IP_V4 = "0.0.0.0"
-# indirizzo di rete v6
-TCP_IP_V6 = "0:0:0:0:0:0:0:0"
-# numero della porta
-TCP_PORT = 3000;
-
+# Insieme di costanti utilizzate nel progetto
+TCP_IP4 = ''  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+TCP_IP6 = ''  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+TCP_PORT = 3000
 
 class MultiServer:
-    def accept_v4(server_socket_v4):
-        # accetto connessione ipv4
-        (client, address) = server_socket_v4.accept();
-        # connessione in arrivo da address
-        print("....client: ", address);
-        thread = ServerThread(client, address);
-        thread.start();
-
-    def accept_v6(server_socket_v6):
-        # accetto la connessione v6
-        (client, address) = server_socket_v6.accept();
-        # connessione in arrivo da address
-        print("....client: ", address);
-        thread = ServerThread(client, address);
-        thread.start();
 
     def start(self):
-        # socket server INET di tipo STREAM per TCP per ip v4
-        server_sock_v4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
 
-        # socket server INET6 di tipo STREAM per TCP per ip v6
-        server_sock_v6 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM);
+        # Creo il socket ipv4, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
+        server_socket4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket4.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket4.bind((TCP_IP4, TCP_PORT)) #forse bisogna gestire errori
 
-        # imposta riutilizzo della connessione
-        server_sock_v4.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_sock_v6.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # Creo il socket ipv4, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
+        server_socket6 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        server_socket6.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket6.bind((TCP_IP6, TCP_PORT)) #forse bisogna gestire errori
 
-        # associa il socket a un indirizzo pubblico con una porta
-        server_sock_v4.bind((TCP_IP_V4, TCP_PORT));
-        server_sock_v6.bind((TCP_IP_V6, TCP_PORT));
+        # Metto il server in ascolto per eventuali richieste sui socket appena creati
+        server_socket4.listen(5)
+        server_socket6.listen(5)
 
-        # si mette in ascolto, per numero di connessioni pendenti
-        server_sock_v4.listen(5);
-        server_sock_v6.listen(5);
+        # Eseguo le operazioni seguenti finchè il server non viene chiuso
+        running = True #Impostare su false per fermare il server e chiudere i thread
+        '''
+        Lanciare eventualmente in questo punto il thread che si occupa della gestione degli input per controllare lo
+        stato del server (per esempio, sapere quanti file sono registrati al momento, chiudere il tutto, ecc)
+        '''
+        while running:
 
-        # TODO: sistemare la connessione per entrambi gli indirizzi
-        while True:
-            print("....Server in ascolto....");
+            # Per non rendere accept() bloccante uso l'oggetto select con il metodo select() sui socket messi in ascolto
+            input_ready, read_ready, error_ready = select.select([server_socket4, server_socket6], [], [])
 
-            # thread per gestire la connessione ipv4
-            thread_v4 = threading.Thread(target=accept_v4, args=server_sock_v4);
-            thread_v4.start();
+            # Ora controllo quale dei due socket ha ricevuto una richiesta
+            for s in input_ready:
 
-            # thread per gestire la connessione ipv6
-            thread_v4 = threading.Thread(target=accept_v6, args=server_sock_v4);
-            thread_v4.start();
+                # Il client si è collegato tramite socket IPv4, accetto quindi la sua richiesta avviando il worker
+                if s == client_socket4:
+                    client_socket4, address4 = server_socket4.accept()
+                    client_thread = worker(client_socket4)
+                    client_thread.run()
 
-tcpServer = MultiServer();
-tcpServer.start();
+                # Il client si è collegato tramite socket IPv6, accetto quindi la sua richiesta avviando il worker
+                elif s == client_socket6:
+                    client_socket6, address6 = server_socket6.accept()
+                    client_thread = worker(client_socket6)
+                    client_thread.run()
+
+        # Chiudo i socket
+        server_socket4.close()
+        server_socket6.close()
+
+tcpServer = MultiServer()
+tcpServer.start()
