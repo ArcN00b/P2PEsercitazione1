@@ -23,13 +23,13 @@ class ManageDB:
             c.execute("DROP TABLE IF EXISTS Files;")
             c.execute("CREATE TABLE Files (name TEXT, md5 TEXT);")
 
-        except sqlite3.Error, e:
+        except sqlite3.Error as e:
 
             # Gestisco l'eccezione
             if conn:
                 conn.rollback()
 
-            print "Codice Errore 01 - initialize: %s:" % e.args[0]
+            print("Codice Errore 01 - initialize: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -51,13 +51,13 @@ class ManageDB:
             # Aggiungo il client
             c.execute("INSERT INTO Clients VALUES('" + ip + "' , " + port + " );")
 
-        except sqlite3.Error, e:
+        except sqlite3.Error as e:
 
             # Gestisco l'eccezione
             if conn:
                 conn.rollback()
 
-            print "Codice Errore 02 - addClient: %s:" % e.args[0]
+            print ("Codice Errore 02 - addClient: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -79,13 +79,13 @@ class ManageDB:
             # Aggiungo il file
             c.execute("INSERT INTO Files VALUES('" + name + "' , '" + md5 + "' );")
 
-        except sqlite3.Error, e:
+        except sqlite3.Error as e:
 
             # Gestisco l'eccezione
             if conn:
                 conn.rollback()
 
-            print "Codice Errore 03 - addFile: %s:" % e.args[0]
+            print ("Codice Errore 03 - addFile: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -106,13 +106,13 @@ class ManageDB:
             # Rimuovo il client
             c.execute("DELETE FROM Clients WHERE ip = " + ip + " );")
 
-        except sqlite3.Error, e:
+        except sqlite3.Error as e:
 
             # Gestisco l'eccezione
             if conn:
                 conn.rollback()
 
-            print "Codice Errore 04 - removeClient: %s:" % e.args[0]
+            print("Codice Errore 04 - removeClient: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -137,13 +137,13 @@ class ManageDB:
             # Rimuovo il file
             c.execute("DELETE FROM Files WHERE name = " + name + " and md5 = " + md5 + " );")
 
-        except sqlite3.Error, e:
+        except sqlite3.Error as e:
 
             # Gestisco l'eccezione
             if conn:
                 conn.rollback()
 
-            print "Codice Errore 05 - removeFile: %s:" % e.args[0]
+            print ("Codice Errore 05 - removeFile: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
