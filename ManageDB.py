@@ -5,9 +5,8 @@ import sqlite3
 import sys
 
 class ManageDB:
-
     # Metodo che inizializza il database
-    def initialize(self):
+    def __init__(self):
 
         try:
 
@@ -38,7 +37,6 @@ class ManageDB:
             if conn:
                 conn.close()
 
-
     # Metodo che aggiunge un client che ha fatto il login
     def addClient(self, ip, port):
 
@@ -49,7 +47,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Aggiungo il client
-            c.execute("INSERT INTO Clients VALUES('" + ip + "' , " + port + " );")
+            c.execute("INSERT INTO Clients VALUES(?,?)", (ip, port))
 
         except sqlite3.Error as e:
 
@@ -57,7 +55,7 @@ class ManageDB:
             if conn:
                 conn.rollback()
 
-            print ("Codice Errore 02 - addClient: %s:" % e.args[0])
+            print("Codice Errore 02 - addClient: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -65,7 +63,6 @@ class ManageDB:
             # Chiudo la connessione
             if conn:
                 conn.close()
-
 
     # Metodo che aggiunge un file aggiunto da un client
     def addFile(self, name, md5):
@@ -77,7 +74,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Aggiungo il file
-            c.execute("INSERT INTO Files VALUES('" + name + "' , '" + md5 + "' );")
+            c.execute("INSERT INTO Files VALUES(?,?)", name, md5)
 
         except sqlite3.Error as e:
 
@@ -85,7 +82,7 @@ class ManageDB:
             if conn:
                 conn.rollback()
 
-            print ("Codice Errore 03 - addFile: %s:" % e.args[0])
+            print("Codice Errore 03 - addFile: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -95,7 +92,7 @@ class ManageDB:
                 conn.close()
 
     # Metodo che elimina il client tramite indirizzo ip
-    def removeClient(self,ip):
+    def removeClient(self, ip):
 
         try:
 
@@ -121,9 +118,8 @@ class ManageDB:
             if conn:
                 conn.close()
 
-
     # Metodo che elimina il file identificato da nome e md5
-    def removeFile(self,name,md5):
+    def removeFile(self, name, md5):
 
         # Il metodo non fa distinzione da chi ha caricato il file
         # Risulta raro che per errore vada a rimuovere un file caricato da piu' utenti, dato che md5 identifica il file
@@ -143,7 +139,7 @@ class ManageDB:
             if conn:
                 conn.rollback()
 
-            print ("Codice Errore 05 - removeFile: %s:" % e.args[0])
+            print("Codice Errore 05 - removeFile: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
@@ -152,6 +148,7 @@ class ManageDB:
             if conn:
                 conn.close()
 
-
-
+manager = ManageDB()
+manager.addClient("192.168.0.1",3000)
+print("aggiunto client");
 
