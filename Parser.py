@@ -46,7 +46,7 @@ class Parser:
 
 
 
-    # Metodo statico che si occupa di suddividere i vari campi di data in modo consono
+    # Metodo statico che controlla la corretta formattazione del parametro data
     def check(data):
 
         # Inizializzo la lista di comandi e un flag degli errori
@@ -60,12 +60,11 @@ class Parser:
             print('Errore, comando (' + command + ') non riconosciuto \n')
 
         # Se il comando è LOGI eseguo questi controlli tramite regex
-        if command == 'LOGI':
+        if command == 'LOGI' and not error:
             p = re.compile('(\d{3}\.){3}\d{3}\|([\da-fA-F]{4}\:){7}[\da-fA-F]{4}\.\d{5}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi IPP2P e PP2P non sono formattati correttamente \n')
-
 
         # Se il comando è ADDF eseguo questi controlli tramite regex
         elif command == 'ADDF' and not error:
@@ -98,3 +97,5 @@ class Parser:
         # Se questo else viene eseguito significa che il comando ricevuto non è previsto
         if not error:
             print('Il messaggio è ben formattato\n')
+        else:
+            print(data + '\n')
