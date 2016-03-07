@@ -18,8 +18,11 @@ class Response:
 
     #Metodo per la generazione della risposta ad una richiesta di add
     #Ritorna una stringa rappresentante la risposta
-    def addFile(self,database,fileMd5):
+    def addFile(self,database,fileMd5,sessionId,fileName):
         tmp='AADD.'
+
+        #metodo che aggiune un file file md5 al database
+        database.addFile(fileMd5,sessionId,fileName)
         #il metodo conta il numero di file con quel Md5, si suppone che l'aggiunta sia gia stata fatta
         n=database.numOfFile(fileMd5)
         tmp=tmp+'{:0>3}'.format(n)
@@ -48,7 +51,7 @@ class Response:
         return tmp
 
     #ricerca da sistemare per vedere reale implementazione del database
-    def serch(self,database,stringa):
+    def search(self,database,stringa):
         tmp='AFIN.'
         return tmp
 
