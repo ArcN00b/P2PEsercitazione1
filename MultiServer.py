@@ -1,5 +1,6 @@
 import select
 import socket
+import Worker
 
 # Insieme di costanti utilizzate nel progetto
 TCP_IP4 = ''  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
@@ -41,13 +42,13 @@ class MultiServer:
                 # Il client si è collegato tramite socket IPv4, accetto quindi la sua richiesta avviando il worker
                 if s == client_socket4:
                     client_socket4, address4 = server_socket4.accept()
-                    client_thread = worker(client_socket4)
+                    client_thread = Worker(client_socket4)
                     client_thread.run()
 
                 # Il client si è collegato tramite socket IPv6, accetto quindi la sua richiesta avviando il worker
                 elif s == client_socket6:
                     client_socket6, address6 = server_socket6.accept()
-                    client_thread = worker(client_socket6)
+                    client_thread = Worker(client_socket6)
                     client_thread.run()
 
         # Chiudo i socket
