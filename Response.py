@@ -12,10 +12,8 @@ class Response:
             tmp=tmp+'0000000000000000'
         else:
             s='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-            val=''
             for i in range(0,16):
-                val=val+s(random.randint(0,len(s)-1))
-            database.addClient(val,ip,port)
+                tmp=tmp+s(random.randint(0,15))
         return tmp
 
     #Metodo per la generazione della risposta ad una richiesta di add
@@ -55,26 +53,6 @@ class Response:
     #ricerca da sistemare per vedere reale implementazione del database
     def search(self,database,stringa):
         tmp='AFIN.'
-        #metodo che ricerca ricerca il numero distinto di Md5 sulla base della stringa di ricerca
-        listMd5=database.findMd5(stringa)
-        tmp=tmp+'{:0>3}'.format(listMd5)
-        for i in range(0,len(listMd5)):
-            tmp=tmp+'{'+listMd5[i]+'.'
-            #Ritorna la il fileName di un determinato Md5
-            val=database.findFileName(listMd5[i])
-            #aggiungo il nome del file alla stringa di ritorno
-            tmp=tmp+val+'.'
-            #aggiungo il numero file presenti con lo stesso md5
-            val=database.numOfFile(listMd5[i])
-            tmp=tmp+'{:0>3}'.format(val)+'.'
-            #metodo per ricercare tutte le persone che hanno il file con quel Md5, ritorna una lista di sessionId
-            listSessionId=database.findSessionID(listMd5[i])
-            for j in range(0,len(listSessionId[i])):
-                ip,port=database.findClient(listSessionId[i])
-                tmp=tmp+'{'+ip+'.'+port+'}'
-            tmp=tmp+'}'
-
-
         return tmp
 
 
