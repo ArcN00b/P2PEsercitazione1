@@ -16,11 +16,11 @@ class ManageDB:
 
             # Creo la tabella dei client e la cancello se esiste
             c.execute("DROP TABLE IF EXISTS Clients;")
-            c.execute("CREATE TABLE Clients (ip TEXT, port INT);")
+            c.execute("CREATE TABLE Clients (sessionId TEXT, ip TEXT, port TEXT);")
 
             # Creo la tabella dei file e la cancello se esiste
             c.execute("DROP TABLE IF EXISTS Files;")
-            c.execute("CREATE TABLE Files (name TEXT, md5 TEXT);")
+            c.execute("CREATE TABLE Files (name TEXT, md5 TEXT, sessionId TEXT);")
 
         except sqlite3.Error as e:
 
@@ -29,7 +29,7 @@ class ManageDB:
                 conn.rollback()
 
             print("Codice Errore 01 - initialize: %s:" % e.args[0])
-            sys.exit(1)
+            #raise Exception()
 
         finally:
 
@@ -38,7 +38,7 @@ class ManageDB:
                 conn.close()
 
     # Metodo che aggiunge un client che ha fatto il login
-    def addClient(self, ip, port):
+    def addClient(self, sessionId, ip, port):
 
         try:
 
@@ -47,7 +47,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Aggiungo il client
-            c.execute("INSERT INTO Clients VALUES(?,?)", (ip, port))
+            c.execute("INSERT INTO Clients VALUES(?,?,?)", (sessionId, ip, port))
 
         except sqlite3.Error as e:
 
@@ -56,7 +56,7 @@ class ManageDB:
                 conn.rollback()
 
             print("Codice Errore 02 - addClient: %s:" % e.args[0])
-            sys.exit(1)
+            #raise Exception("Errore")
 
         finally:
 
@@ -65,7 +65,7 @@ class ManageDB:
                 conn.close()
 
     # Metodo che aggiunge un file aggiunto da un client
-    def addFile(self, name, md5):
+    def addFile(self, md5, sessionId, name):
 
         try:
 
@@ -74,7 +74,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Aggiungo il file
-            c.execute("INSERT INTO Files VALUES(?,?)", name, md5)
+            c.execute("INSERT INTO Files VALUES(?,?,?)", name, md5, sessionId)
 
         except sqlite3.Error as e:
 
@@ -83,7 +83,7 @@ class ManageDB:
                 conn.rollback()
 
             print("Codice Errore 03 - addFile: %s:" % e.args[0])
-            sys.exit(1)
+            raise Exception()
 
         finally:
 
@@ -110,7 +110,7 @@ class ManageDB:
                 conn.rollback()
 
             print("Codice Errore 04 - removeClient: %s:" % e.args[0])
-            sys.exit(1)
+            raise Exception()
 
         finally:
 
@@ -119,7 +119,7 @@ class ManageDB:
                 conn.close()
 
     # Metodo che elimina il file identificato da nome e md5
-    def removeFile(self, name, md5):
+    def removeFile(self, md5, sessionId):
 
         # Il metodo non fa distinzione da chi ha caricato il file
         # Risulta raro che per errore vada a rimuovere un file caricato da piu' utenti, dato che md5 identifica il file
@@ -131,7 +131,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Rimuovo il file
-            c.execute("DELETE FROM Files WHERE name = " + name + " and md5 = " + md5 + " );")
+            c.execute("DELETE FROM Files WHERE sessionId = " + sessionId + " and md5 = " + md5 + " );")
 
         except sqlite3.Error as e:
 
@@ -140,7 +140,7 @@ class ManageDB:
                 conn.rollback()
 
             print("Codice Errore 05 - removeFile: %s:" % e.args[0])
-            sys.exit(1)
+            raise Exception()
 
         finally:
 
@@ -148,7 +148,7 @@ class ManageDB:
             if conn:
                 conn.close()
 
-    #Metodo per ricercare il client dai campi session id e port, per vedere se è gia presente
+    # Metodo per ricercare il client dai campi session id e port, per vedere se e' gia presente
     def findClient(self,ip, port):
         try:
 
@@ -157,7 +157,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Rimuovo il file
-            c.execute("SELECT sessionID FROM Clientes WHERE ip = " + ip + " and port = port );")
+            c.execute("SELECT sessionID FROM Clientes WHERE ip = " + ip + " and port = " + port + " );")
             result=c.fetchall()
             if (len(result)==0):
                 return -1
@@ -168,7 +168,7 @@ class ManageDB:
         except sqlite3.Error as e:
             #In caso di errore stampo l'errore
             print ("Codice Errore 06 - findClientForIP: %s:" % e.args[0])
-            sys.exit(1)
+            raise Exception()
 
         finally:
 
@@ -176,9 +176,9 @@ class ManageDB:
             if conn:
                 conn.close()
 
-    #Metodo per ricercare le informazioni del client per sessionID
-    #Ritorna due elementi, l'ip e la porta
-    def findClient(self,sessionID):
+    # Metodo per ricercare le informazioni del client per sessionID
+    # Ritorna due elementi, l'ip e la porta
+    def findClient(self,sessionId):
         try:
 
             # Creo la connessione al database e creo un cursore ad esso
@@ -186,7 +186,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Rimuovo il file
-            c.execute("SELECT ip,port FROM Clientes WHERE sessionID = " + sessionID+" );")
+            c.execute("SELECT ip,port FROM Clients WHERE sessionID = " + sessionId + " );")
             result=c.fetchall()
             for row in result:
                 return row[0],row[1]
@@ -194,7 +194,7 @@ class ManageDB:
         except sqlite3.Error as e:
             #In caso di errore stampo l'errore
             print ("Codice Errore 07 - findClientForSessionID: %s:" % e.args[0])
-            sys.exit(1)
+            raise Exception()
 
         finally:
 
@@ -203,6 +203,6 @@ class ManageDB:
                 conn.close()
 
 manager = ManageDB()
-manager.addClient("192.168.0.1",3000)
+manager.addClient("1","192.168.0.2","3000")
 print("aggiunto client");
 
