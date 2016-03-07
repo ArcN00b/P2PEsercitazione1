@@ -17,11 +17,11 @@ class ManageDB:
 
             # Creo la tabella dei client e la cancello se esiste
             c.execute("DROP TABLE IF EXISTS Clients;")
-            c.execute("CREATE TABLE Clients (ip TEXT, port INT);")
+            c.execute("CREATE TABLE Clients (ip TEXT, port INT,sessionID TEXT);")
 
             # Creo la tabella dei file e la cancello se esiste
             c.execute("DROP TABLE IF EXISTS Files;")
-            c.execute("CREATE TABLE Files (name TEXT, md5 TEXT);")
+            c.execute("CREATE TABLE Files (name TEXT, md5 TEXT,sessionID TEXT);")
 
         except sqlite3.Error as e:
 
@@ -144,6 +144,60 @@ class ManageDB:
                 conn.rollback()
 
             print ("Codice Errore 05 - removeFile: %s:" % e.args[0])
+            sys.exit(1)
+
+        finally:
+
+            # Chiudo la connessione
+            if conn:
+                conn.close()
+
+    #Metodo per ricercare il client dai campi session id e port, per vedere se è gia presente
+    def findClient(self,ip, port):
+        try:
+
+            # Creo la connessione al database e creo un cursore ad esso
+            conn = sqlite3.connect("data.db")
+            c = conn.cursor()
+
+            # Rimuovo il file
+            c.execute("SELECT sessionID FROM Clientes WHERE ip = " + ip + " and port = port );")
+            result=c.fetchall()
+            if (len(result)==0):
+                return -1
+            else:
+                for row in result:
+                   return row[0]
+
+        except sqlite3.Error as e:
+            #In caso di errore stampo l'errore
+            print ("Codice Errore 06 - findClientForIP: %s:" % e.args[0])
+            sys.exit(1)
+
+        finally:
+
+            # Chiudo la connessione
+            if conn:
+                conn.close()
+
+    #Metodo per ricercare le informazioni del client per sessionID
+    #Ritorna due elementi, l'ip e la porta
+    def findClient(self,sessionID):
+        try:
+
+            # Creo la connessione al database e creo un cursore ad esso
+            conn = sqlite3.connect("data.db")
+            c = conn.cursor()
+
+            # Rimuovo il file
+            c.execute("SELECT ip,port FROM Clientes WHERE sessionID = " + sessionID+" );")
+            result=c.fetchall()
+            for row in result:
+                return row[0],row[1]
+
+        except sqlite3.Error as e:
+            #In caso di errore stampo l'errore
+            print ("Codice Errore 07 - findClientForSessionID: %s:" % e.args[0])
             sys.exit(1)
 
         finally:
