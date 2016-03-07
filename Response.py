@@ -1,6 +1,8 @@
 import random.py
 import ManageDB.py
 
+#Tutti i metodi eseguono le operazioni sul database
+#Necessitano quindi che sia passato il database in ingresso
 class Response:
 
     #Metodo per la generazione della risposta ad una richiesta di login
@@ -20,9 +22,11 @@ class Response:
     #Ritorna una stringa rappresentante la risposta
     def addFile(self,database,fileMd5,sessionId,fileName):
         tmp='AADD.'
-
-        #metodo che aggiune un file file md5 al database
-        database.addFile(fileMd5,sessionId,fileName)
+        nome=fileName
+        if (len(fileName)<100):
+            nome=fileName+(' '*(100-len(fileName)))
+        #metodo che aggiune un file file md5 al database, aggiorna anche gli altri nome dei file
+        database.addFile(sessionId,fileMd5,nome)
         #il metodo conta il numero di file con quel Md5, si suppone che l'aggiunta sia gia stata fatta
         n=database.numOfFile(fileMd5)
         tmp=tmp+'{:0>3}'.format(n)
@@ -50,9 +54,12 @@ class Response:
         tmp=tmp+'{:0>3}'.format(n)
         return tmp
 
-    #ricerca da sistemare per vedere reale implementazione del database
-    def search(self,database,stringa):
+
+    def serch(self,database,stringa):
         tmp='AFIN.'
+        #Ricerco tutti i client che la cui stringa di ricerca corrisponde
+        #Vengono ritornati uno o piu sessionID
+
         return tmp
 
 
