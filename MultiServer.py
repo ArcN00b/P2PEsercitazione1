@@ -1,5 +1,6 @@
 import select
 import socket
+import Worker
 
 # Insieme di costanti utilizzate nel progetto
 TCP_IP4 = ''  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
