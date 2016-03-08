@@ -368,7 +368,7 @@ class ManageDB:
 
 
 
-
+'''
 manager = ManageDB()
 
 # TEST FILE
@@ -382,7 +382,6 @@ if len(all_rows)==0:
 for row in all_rows:
     print('{0} : {1}'.format(row[0], row[1]))
 
-'''
 # TEST CLIENT
 manager.addClient("1","192.168.0.2","3000")
 
