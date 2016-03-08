@@ -9,7 +9,7 @@ class Response:
     def login(self,database,ip,port):
         tmp='ALGI.'
         #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
-        if (database.findClient(ip,port)==-1):
+        if (database.findClient('',ip,port,1)==-1):
             tmp=tmp+'0000000000000000'
         else:
             #creazione della stringa di sessione in maniera casuale
@@ -82,7 +82,7 @@ class Response:
             listSessionId=database.findSessionID(listMd5[i])
             for j in range(0,len(listSessionId[i])):
                 #Metodo che ritorna ip e porta dato un sessioID
-                ip,port=database.findClient(listSessionId[i])
+                ip,port=database.findClient(listSessionId[i],'','',2)
                 tmp=tmp+'{'+ip+'.'+port+'}'
             tmp=tmp+'}'
 
