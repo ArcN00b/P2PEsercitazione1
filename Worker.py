@@ -32,7 +32,7 @@ class Worker(threading.Thread):
             data = self.client.recv(2048).decode()
 
             # recupero del comando
-            command, fields = Parser(data)
+            command, fields = Parser.parse(data)
             # risposta da inviare
             resp = ""
 
