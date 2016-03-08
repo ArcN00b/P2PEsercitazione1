@@ -4,8 +4,8 @@ import Worker
 import ManageDB
 
 # Insieme di costanti utilizzate nel progetto
-TCP_IP4 = ''  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
-TCP_IP6 = ''  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 TCP_PORT = 3000
 
 class MultiServer:
@@ -56,13 +56,13 @@ class MultiServer:
             for s in input_ready:
 
                 # Il client si è collegato tramite socket IPv4, accetto quindi la sua richiesta avviando il worker
-                if s == client_socket4:
+                if s == server_socket4:
                     client_socket4, address4 = server_socket4.accept()
                     client_thread = Worker(client_socket4, self.database)
                     client_thread.run()
 
                 # Il client si è collegato tramite socket IPv6, accetto quindi la sua richiesta avviando il worker
-                elif s == client_socket6:
+                elif s == server_socket6:
                     client_socket6, address6 = server_socket6.accept()
                     client_thread = Worker(client_socket6, self.database)
                     client_thread.run()

@@ -100,8 +100,3 @@ class Worker(threading.Thread):
         print("Chiusura socket di connessione")
         # chiude il client
         self.client.close();
-
-        # s = "CIAO";
-        # if s == "CIO":
-        #     print("vero")
-        # print("fine");
