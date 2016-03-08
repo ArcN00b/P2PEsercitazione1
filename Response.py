@@ -6,7 +6,8 @@ class Response:
 
     #Metodo per la generazione della risposta ad una richiesta di login
     #Ritorna una stringa rappresentante il messaggio da inviare
-    def login(self,database,ip,port):
+    @staticmethod
+    def login(database,ip,port):
         tmp='ALGI.'
         #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
         if (database.findClient('',ip,port,1)==-1):
@@ -24,7 +25,8 @@ class Response:
 
     #Metodo per la generazione della risposta ad una richiesta di add
     #Ritorna una stringa rappresentante la risposta
-    def addFile(self,database,fileMd5,sessionId,fileName):
+    @staticmethod
+    def addFile(database,fileMd5,sessionId,fileName):
         tmp='AADD.'
         #controllo se il fileName ha almeno 100 caratteri se non ne ha ne aggiungo a destra
         nome=fileName
@@ -38,7 +40,8 @@ class Response:
         tmp=tmp+'{:0>3}'.format(n)
         return tmp
 
-    def remove(self,database,fileMd5,sessionId):
+    @staticmethod
+    def remove(database,fileMd5,sessionId):
         tmp='ADEL.'
         #metodo che ricerca la presenza di un file md5 collegato ad un determinato sessioId
         val=database.numOfFile(fileMd5,sessionId)
@@ -52,7 +55,8 @@ class Response:
         tmp=tmp+'{:0>3}'.format(n)
         return tmp
 
-    def logout(self,database,sessionId):
+    @staticmethod
+    def logout(database,sessionId):
         tmp='ALGO.'
         #conto quanti file quel peer aveva condiviso
         n=database.numOfFileForSession(sessionId)
@@ -64,7 +68,8 @@ class Response:
         return tmp
 
     #ricerca da sistemare per vedere reale implementazione del database
-    def search(self,database,stringa):
+    @staticmethod
+    def search(database,stringa):
         tmp='AFIN.'
         #metodo che ricerca ricerca il numero distinto di Md5 sulla base della stringa di ricerca
         listMd5=database.findMd5(stringa)
@@ -89,7 +94,8 @@ class Response:
         return tmp
 
     #Metodo che elabora la response in caso di download
-    def download(self,database,sessioId,fileMd5):
+    @staticmethod
+    def download(database,sessioId,fileMd5):
         tmp='ADRE.'
         #Metodo del database che ritorna il numero di download per un sessionId e un fileMd5
         n=database.numOfDownload(sessioId,fileMd5)

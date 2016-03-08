@@ -88,11 +88,13 @@ class Worker(threading.Thread):
 
                 # termine del ciclo
                 running = False
+            # se non ricevo niente di valido response va a none
             else:
-                resp = "NONE"
+                resp = None
 
-            # invio della risposta creata
-            self.client.sendall(resp.encode())
+            # invio della risposta creata controllando che sia valida
+            if resp is not None:
+                self.client.sendall(resp.encode())
             print("comando inviato")
         # fine del ciclo
 
