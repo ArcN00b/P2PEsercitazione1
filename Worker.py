@@ -2,7 +2,8 @@ import threading
 import socket
 import struct
 from Parser import *
-from  Response import *
+from Response import *
+
 
 class Worker(threading.Thread):
     client = 0
@@ -53,7 +54,7 @@ class Worker(threading.Thread):
                 # recupero file name
                 fileName = fields[2]
 
-                resp = Response.addFile(self.database, fileMD5, sessionID,fileName)
+                resp = Response.addFile(self.database, fileMD5, sessionID, fileName)
             # DELF
             elif command == "DELF":
                 # recupero sessionID
@@ -93,14 +94,14 @@ class Worker(threading.Thread):
             # invio della risposta creata
             self.client.sendall(resp.encode())
             print("comando inviato")
-        #fine del ciclo
+        # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati
         print("Chiusura socket di connessione")
         # chiude il client
         self.client.close();
 
-# s = "CIAO";
-# if s == "CIO":
-#     print("vero")
-# print("fine");
+        # s = "CIAO";
+        # if s == "CIO":
+        #     print("vero")
+        # print("fine");
