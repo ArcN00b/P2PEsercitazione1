@@ -11,15 +11,25 @@ class MultiServer:
 
     def start(self):
 
-        # Creo il socket ipv4, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
-        server_socket4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket4.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket4.bind((TCP_IP4, TCP_PORT)) #forse bisogna gestire errori
+        # Creo il socket ipv4, imposto l'eventuale riutilizzo, lo assegno all'ip e alla
+        try:
+            server_socket4 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket4.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket4.bind((TCP_IP4, TCP_PORT))
 
-        # Creo il socket ipv4, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
-        server_socket6 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-        server_socket6.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket6.bind((TCP_IP6, TCP_PORT)) #forse bisogna gestire errori
+        # Gestisco l'eventuale exception
+        except socket.error, msg:
+            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
+
+        # Creo il socket ipv6, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
+        try:
+            server_socket6 = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+            server_socket6.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket6.bind((TCP_IP6, TCP_PORT))
+
+        # Gestisco l'eventuale exception
+        except socket.error, msg:
+            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
 
         # Metto il server in ascolto per eventuali richieste sui socket appena creati
         server_socket4.listen(5)
