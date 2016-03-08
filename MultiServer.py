@@ -73,6 +73,3 @@ class MultiServer:
 
 tcpServer = MultiServer()
 tcpServer.start()
-
-print("ciao")
-print("pippo")
