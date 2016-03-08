@@ -1,7 +1,7 @@
 import select
 import socket
-import Worker
-import ManageDB
+from Worker import *
+from ManageDB import *
 
 # Insieme di costanti utilizzate nel progetto
 TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
@@ -13,7 +13,7 @@ class MultiServer:
     database = None;
 
     def __init__(self):
-        self.database = ManageDB();
+        self.database = ManageDB()
 
     def start(self):
 
