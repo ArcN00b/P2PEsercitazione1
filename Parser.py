@@ -68,21 +68,21 @@ class Parser:
 
         # Se il comando è LOGI eseguo questi controlli tramite regex
         if command == 'LOGI' and not error:
-            p = re.compile('(\d{3}\.){3}\d{3}\|([\da-fA-F]{4}\:){7}[\da-fA-F]{4}\.\d{5}$')
+            p = re.compile('(\d{3}\.){3}\d{3}\|([\da-fA-F]{4}\:){7}[\da-fA-F]{4}\d{5}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi IPP2P e PP2P non sono formattati correttamente \n')
 
         # Se il comando è ADDF eseguo questi controlli tramite regex
         elif command == 'ADDF' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z]{16}\.[\da-zA-Z\.\ ]{100}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}[\da-zA-Z\.\ ]{100}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID, FileMD5 e Filename non sono formattati correttamente\n')
 
         # Se il comando è DELF eseguo questi controlli tramite regex
         elif command == 'DELF' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z]{16}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e FileMD5 non sono formattati correttamente\n')
