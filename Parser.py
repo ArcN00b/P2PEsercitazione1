@@ -15,28 +15,28 @@ class Parser:
 
         # Se il comando è LOGI suddivido data in questo modo
         if command == 'LOGI':
-            fields[0] = data[5:-6] #IPP2P[55B]
+            fields[0] = data[4:-5] #IPP2P[55B]
             fields[1] = data[-5:] #PP2P[5B]
 
         # Se il comando è ADDF suddivido data in questo modo
         elif command == 'ADDF':
-            fields[0] = data[5:21] #SessionID[16]
-            fields[1] = data[22:38] #FileMD5[16]
+            fields[0] = data[4:20] #SessionID[16]
+            fields[1] = data[20:36] #FileMD5[16]
             fields[2] = data[-100:] #Filename[100]
 
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DELF':
-            fields[0] = data[5:21] #SessionID[16]
+            fields[0] = data[4:20] #SessionID[16]
             fields[1] = data[-16:] #FileMD5[16]
 
         # Se il comando è FIND suddivido data in questo modo
         elif command == 'FIND':
-            fields[0] = data[5:21] #SessionID[16]
+            fields[0] = data[4:20] #SessionID[16]
             fields[1] = data[-20:] #Ricerca[20]
 
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DREG':
-            fields[0] = data[5:21] #SessionID[16]
+            fields[0] = data[4:20] #SessionID[16]
             fields[1] = data[-16:] #FileMD5[16]
 
         # Se il comando è LOGO suddivido data in questo modo
