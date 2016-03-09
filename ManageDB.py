@@ -372,15 +372,18 @@ class ManageDB:
 manager = ManageDB()
 
 # TEST FILE
-manager.addClient("1","192.168.0.2","3000") #session md5
+manager.addClient("1","ip","port") #session ip port
 #print("num download: " + manager.addDownload("2","1",10))
 
-all_rows = manager.findClient("2", "0", "0", "2")
+all_rows = manager.findClient('', 'ip', 'port', '1') #session ip port flag
 if len(all_rows)==0:
     print("NOOOOOOOOOOOOOOOOOOONE")
+if len(all_rows)!=0:
+    print("Non e zero")
+
 
 for row in all_rows:
-    print('{0} : {1}'.format(row[0], row[1]))
+    print('{0} : {0}'.format(row[0], row[1]))
 
 # TEST CLIENT
 manager.addClient("1","192.168.0.2","3000")
