@@ -4,10 +4,11 @@ import re
 class Parser:
 
     # Metodo statico che si occupa di suddividere i vari campi di data in modo consono
+    @staticmethod
     def parse(data):
 
         # Inizializzo il contenitore dei vari campi
-        fields = None
+        fields = {}
 
         # Prendo i primi 4 caratteri maiuscoli all'interno di data e li inserisco in command
         command = data[0:4]
@@ -52,6 +53,7 @@ class Parser:
 
 
     # Metodo statico che controlla la corretta formattazione del parametro data
+    @staticmethod
     def check(data):
 
         # Inizializzo la lista di comandi e un flag degli errori
