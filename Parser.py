@@ -89,14 +89,14 @@ class Parser:
 
         # Se il comando è FIND eseguo questi controlli tramite regex
         elif command == 'FIND' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z\.\ ]{20}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z\.\ ]{20}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e Ricerca non sono formattati correttamente\n')
 
         # Se il comando è DREG eseguo questi controlli tramite regex
         elif command == 'DREG' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z]{16}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e FileMD5 non sono formattati correttamente\n')
