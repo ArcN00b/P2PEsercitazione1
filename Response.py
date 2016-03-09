@@ -11,11 +11,10 @@ class Response:
         try:
             tmp='ALGI'
             #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
-            if (not (len(database.findClient('',ip,port,'1')) !=0)):
-                tmp=tmp+'pippo'+'0000000000000000'
+            if (len(database.findClient('',ip,port,'1')) !=0):
+                tmp=tmp+'0000000000000000'
             else:
                 #creazione della stringa di sessione in maniera casuale
-                tmp=tmp+'ciao'
                 s='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
                 val=''
                 for i in range(0,16):
