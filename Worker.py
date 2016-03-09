@@ -1,15 +1,19 @@
-import threading;
-import socket;
-import struct;
-import Parser
+import threading
+import socket
+import struct
+from Parser import *
+from Response import *
+
 
 class Worker(threading.Thread):
-    client = 0;
+    client = 0
+    database = None
 
-    def __init__(self, client, address):
+    def __init__(self, client, database):
         # definizione thread del client
-        threading.Thread.__init__(self);
-        self.client = client;
+        threading.Thread.__init__(self)
+        self.client = client
+        self.database = database
 
     def run(self):
         try:
@@ -18,31 +22,81 @@ class Worker(threading.Thread):
             print("errore: ", e);
 
     def comunication(self):
-        # ricezione del dato e immagazzinamento fino al max
-        data = self.client.recv(2048);
+
+        data = " "
+        running = True
 
         # ciclo continua a ricevere i dati
-        while data:
+        while running and len(data) > 0:
+            # ricezione del dato e immagazzinamento fino al max
+            data = self.client.recv(2048).decode()
+
             # recupero del comando
-            cmd = Parser.parse(data);
+            command, fields = Parser(data)
+            # risposta da inviare
+            resp = ""
 
-            # TODO: aggironamento del database e altro
+            # controllo del comando effettuato
+            # LOGI
+            if command == "LOGI":
+                # recupero ip e porta
+                ipp2p = fields[0]
+                pp2p = fields[1]
 
-            # TODO: per creare il pacchetto ben formattato da inviare bisogna utilizzare pack
-            # pack: args, numero byte seguito dalla sequenza di byte da inviare
-            # https://docs.python.org/3.0/library/struct.html
+                # costruzione della risposta "ALGI"
+                resp = Response.login(self.database, ipp2p, pp2p)
+            # ADDF
+            elif command == "ADDF":
+                # recupero session id
+                sessionID = fields[0]
+                # recupero filemd5
+                fileMD5 = fields[1]
+                # recupero file name
+                fileName = fields[2]
 
-            # esempio per login: LOGI[4B]+IPP2P[55B]+PP2P[5B] = 64B
-            resp = Parser.login();
-            packet = struct.pack('64B', resp);
-            # questo metodo invia tutto il pacchetto costruito
-            self.client.sendall(packet);
-            print("Comando Inviato");
+                resp = Response.addFile(self.database, fileMD5, sessionID, fileName)
+            # DELF
+            elif command == "DELF":
+                # recupero sessionID
+                sessionID = fields[0]
+                # recupero del fileMD5
+                fileMD5 = fields[1]
 
-            # resta in attesa del prossimo comando
-            data = self.client.recv(2048);
+                resp = Response.remove(self.database, fileMD5, sessionID)
+            # FIND
+            elif command == "FIND":
+                # recupero sessionID
+                sessionID = fields[0]
+                # recupero campo di ricerca
+                campo = fields[1];
+
+                resp = Response.search(self.database, campo)
+            # DREG
+            elif command == "DREG":
+                # recupero del sessionID
+                sessionID = fields[0]
+                # recupero fileMD5
+                fileMD5 = fields[1]
+
+                resp = Response.download(self.database, sessionID, fileMD5)
+            # LOGO
+            elif command == "LOGO":
+                # recupero sessionID
+                sessionID = fields[0]
+
+                resp = Response.logout(self.database, sessionID)
+
+                # termine del ciclo
+                running = False
+            else:
+                resp = "NONE"
+
+            # invio della risposta creata
+            self.client.sendall(resp.encode())
+            print("comando inviato")
+        # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati
-        print("Chiusura socket di connessione");
+        print("Chiusura socket di connessione")
         # chiude il client
         self.client.close();
