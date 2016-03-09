@@ -10,7 +10,7 @@ class Response:
     def login(database,ip,port):
         tmp='ALGI.'
         #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
-        if (database.findClient('',ip,port,1)==-1):
+        if (len(database.findClient('',ip,port,'1')) ==0):
             tmp=tmp+'0000000000000000'
         else:
             #creazione della stringa di sessione in maniera casuale
@@ -35,60 +35,64 @@ class Response:
         #metodo che aggiune un file file md5 al database, aggiorna anche gli altri nome dei file
         database.addFile(sessionId,fileMd5,nome)
         #il metodo conta il numero di file con quel Md5, si suppone che l'aggiunta sia gia stata fatta
-        n=database.numOfFile(fileMd5)
+        n=database.numOfFile(fileMd5,'','1')
         #alla risposta aggiunge il numero di file con quel Md5 nella directory
-        tmp=tmp+'{:0>3}'.format(n)
+        tmp=tmp+'{:0>3}'.format(n[0])
         return tmp
 
     @staticmethod
     def remove(database,fileMd5,sessionId):
         tmp='ADEL.'
         #metodo che ricerca la presenza di un file md5 collegato ad un determinato sessioId
-        val=database.numOfFile(fileMd5,sessionId)
-        if (val==-1):
+        val=database.searchIfExistFile(fileMd5,sessionId)
+        if (val==0):
             n=999
         else:
             #chiamo il metodo per la rimozione del file
             database.removeFile(fileMd5,sessionId)
             #metodo che conta quanti file hanno quel md5
-            n=database.numOfFile(fileMd5)
-        tmp=tmp+'{:0>3}'.format(n)
+            n=database.numOfFile(fileMd5,'','1')
+        tmp=tmp+'{:0>3}'.format(n[0])
         return tmp
 
     @staticmethod
     def logout(database,sessionId):
         tmp='ALGO.'
         #conto quanti file quel peer aveva condiviso
-        n=database.numOfFileForSession(sessionId)
+        n=database.numOfFile('',sessionId,'2')
         #chiamo il metodo per la rimozione di tutti i file di quel peer
-        database.removeFileOfSession(sessionId)
+        database.removeAllFile(sessionId)
         #sono stati usati due metodi perchè non si sa se il database restituisca il numero
         #di righe eliminate con una delete
-        tmp=tmp+'{:0>3}'.format(n)
+        tmp=tmp+'{:0>3}'.format(n[0])
         return tmp
 
     #ricerca da sistemare per vedere reale implementazione del database
     @staticmethod
     def search(database,stringa):
         tmp='AFIN.'
-        #metodo che ricerca ricerca il numero distinto di Md5 sulla base della stringa di ricerca
-        listMd5=database.findMd5(stringa)
+        if stringa == '*':
+            str=''
+        else:
+            str=stringa
+        # Metodo che ricerca ricerca il numero distinto di Md5 sulla base della stringa di ricerca
+        listMd5=database.findMd5(str)
         tmp=tmp+'{:0>3}'.format(listMd5)
         for i in range(0,len(listMd5)):
-            tmp=tmp+'{'+listMd5[i]+'.'
-            #Ritorna la il fileName di un determinato Md5
-            val=database.findFileName(listMd5[i])
-            #aggiungo il nome del file alla stringa di ritorno
-            tmp=tmp+val+'.'
-            #aggiungo il numero file presenti con lo stesso md5
-            val=database.numOfFile(listMd5[i])
-            tmp=tmp+'{:0>3}'.format(val)+'.'
-            #metodo per ricercare tutte le persone che hanno il file con quel Md5, ritorna una lista di sessionId
-            listSessionId=database.findSessionID(listMd5[i])
-            for j in range(0,len(listSessionId[i])):
+            # Variabile che tiene in memoria l'iesimo md5
+            md5=listMd5[i][0]
+            tmp=tmp+'{'+md5+'.'
+            # Ritorna tutti i sessionId e fileName dato un md5
+            listSessionId=database.findFile(md5)
+            # Aggiungo il nome del file alla stringa di ritorno
+            tmp=tmp+listSessionId[0][0]+'.'
+            # Aggiungo il numero file presenti con lo stesso md5
+            val=database.numOfFile(md5,'','1')
+            tmp=tmp+'{:0>3}'.format(val[0])+'.'
+            for j in range(0,len(listSessionId)):
                 #Metodo che ritorna ip e porta dato un sessioID
-                ip,port=database.findClient(listSessionId[i],'','',2)
-                tmp=tmp+'{'+ip+'.'+port+'}'
+                val=database.findClient(listSessionId[i][1],'','','2')
+                tmp=tmp+'{'+val[0][0]+'.'+val[0][1]+'}'
             tmp=tmp+'}'
 
         return tmp
@@ -97,12 +101,8 @@ class Response:
     @staticmethod
     def download(database,sessioId,fileMd5):
         tmp='ADRE.'
-        #Metodo del database che ritorna il numero di download per un sessionId e un fileMd5
-        n=database.numOfDownload(sessioId,fileMd5)
         #Metodo che aggiunge un numero di download per sessionId e fileMd5, prende anche il numero da aggiungere
-        database.addDownload(sessioId,fileMd5,1)
-        #ora termino la creazione della response
-        n=n+1
+        n=database.addDownload(fileMd5,sessioId,1)
         tmp=tmp+'{:0>3}'.format(n)
         return tmp
 
