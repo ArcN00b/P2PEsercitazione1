@@ -91,6 +91,7 @@ class Worker(threading.Thread):
             # se non ricevo niente di valido response va a none
             else:
                 resp = None
+                running = False
 
             # invio della risposta creata controllando che sia valida
             if resp is not None:
