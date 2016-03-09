@@ -125,7 +125,7 @@ class Response:
             raise Exception('Error')
 
 
-
+'''
 # Test del codice
 from Response import *
 from ManageDB import *
@@ -145,5 +145,5 @@ else:
     print('non e zero')
 val=Response.login(manager,'ip','port')
 print(val)
-
+'''
 
