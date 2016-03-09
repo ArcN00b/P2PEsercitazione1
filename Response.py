@@ -11,10 +11,11 @@ class Response:
         try:
             tmp='ALGI'
             #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
-            if (len(database.findClient('',ip,port,'1')) ==0):
-                tmp=tmp+'0000000000000000'
+            if (not (len(database.findClient('',ip,port,'1')) !=0)):
+                tmp=tmp+'pippo'+'0000000000000000'
             else:
                 #creazione della stringa di sessione in maniera casuale
+                tmp=tmp+'ciao'
                 s='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
                 val=''
                 for i in range(0,16):
@@ -124,5 +125,26 @@ class Response:
         except Exception:
             raise Exception('Error')
 
+
+
+# Test del codice
+from Response import *
+from ManageDB import *
+
+manager=ManageDB()
+
+val=manager.findClient('','ip','port','1')
+print(val)
+print(len(val))
+if (len(val)!=0):
+    print('e zero')
+else:
+    print('non e zero')
+if (len(manager.findClient('','ip','port','1'))!=0):
+    print('e zero')
+else:
+    print('non e zero')
+val=Response.login(manager,'ip','port')
+print(val)
 
 
