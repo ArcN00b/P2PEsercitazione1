@@ -11,9 +11,11 @@ TCP_PORT = 3000
 class MultiServer:
 
     database = None;
+    lock = None
 
     def __init__(self):
         self.database = ManageDB()
+        self.lock = threading.Lock()
 
     def start(self):
 
@@ -58,13 +60,13 @@ class MultiServer:
                 # Il client si è collegato tramite socket IPv4, accetto quindi la sua richiesta avviando il worker
                 if s == server_socket4:
                     client_socket4, address4 = server_socket4.accept()
-                    client_thread = Worker(client_socket4, self.database)
+                    client_thread = Worker(client_socket4, self.database, self.lock)
                     client_thread.run()
 
                 # Il client si è collegato tramite socket IPv6, accetto quindi la sua richiesta avviando il worker
                 elif s == server_socket6:
                     client_socket6, address6 = server_socket6.accept()
-                    client_thread = Worker(client_socket6, self.database)
+                    client_thread = Worker(client_socket6, self.database, self.lock)
                     client_thread.run()
 
         # Chiudo i socket

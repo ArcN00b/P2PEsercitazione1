@@ -8,12 +8,14 @@ from Response import *
 class Worker(threading.Thread):
     client = 0
     database = None
+    lock = None
 
-    def __init__(self, client, database):
+    def __init__(self, client, database, lock):
         # definizione thread del client
         threading.Thread.__init__(self)
         self.client = client
         self.database = database
+        self.lock = lock
 
     def run(self):
         try:
@@ -23,17 +25,17 @@ class Worker(threading.Thread):
 
     def comunication(self):
 
-        data = " "
+        # ricezione del dato e immagazzinamento fino al max
+        data = self.client.recv(2048).decode()
         running = True
 
         # ciclo continua a ricevere i dati
         while running and len(data) > 0:
-            # ricezione del dato e immagazzinamento fino al max
-            data = self.client.recv(2048).decode()
 
             # recupero del comando
             command, fields = Parser.parse(data)
-            # risposta da inviare
+            # risposta da inviare in modo sincronizzato
+            self.lock.acquire()
             resp = ""
 
             # controllo del comando effettuato
@@ -94,9 +96,13 @@ class Worker(threading.Thread):
                 running = False
 
             # invio della risposta creata controllando che sia valida
+            self.lock.release()
             if resp is not None:
                 self.client.sendall(resp.encode())
             print("comando inviato")
+
+            # ricezione del dato e immagazzinamento fino al max
+            data = self.client.recv(2048).decode()
         # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati
