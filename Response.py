@@ -11,7 +11,7 @@ class Response:
         try:
             tmp='ALGI'
             #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
-            if (len(database.findClient('',ip,port,'1')) ==0):
+            if (len(database.findClient('',ip,port,'1')) !=0):
                 tmp=tmp+'0000000000000000'
             else:
                 #creazione della stringa di sessione in maniera casuale
@@ -52,14 +52,15 @@ class Response:
             tmp='ADEL'
             #metodo che ricerca la presenza di un file md5 collegato ad un determinato sessioId
             val=database.searchIfExistFile(fileMd5,sessionId)
-            if (val==0):
+            if (val[0][0]==0):
                 n=999
+                tmp=tmp+'{:0>3}'.format(n)
             else:
                 #chiamo il metodo per la rimozione del file
                 database.removeFile(fileMd5,sessionId)
                 #metodo che conta quanti file hanno quel md5
                 n=database.numOfFile(fileMd5,'','1')
-            tmp=tmp+'{:0>3}'.format(n[0])
+                tmp=tmp+'{:0>3}'.format(n[0])
             return tmp
         except Exception:
             raise ('Error')
@@ -90,7 +91,7 @@ class Response:
                 str=stringa
             # Metodo che ricerca ricerca il numero distinto di Md5 sulla base della stringa di ricerca
             listMd5=database.findMd5(str)
-            tmp=tmp+'{:0>3}'.format(listMd5)
+            tmp=tmp+'{:0>3}'.format(len(listMd5))
             for i in range(0,len(listMd5)):
                 # Variabile che tiene in memoria l'iesimo md5
                 md5=listMd5[i][0]
@@ -104,7 +105,8 @@ class Response:
                 tmp=tmp+'{:0>3}'.format(val[0])
                 for j in range(0,len(listSessionId)):
                     #Metodo che ritorna ip e porta dato un sessioID
-                    val=database.findClient(listSessionId[i][1],'','','2')
+                    #val=listSessionId[j][1]
+                    val=database.findClient(listSessionId[j][1],'','','2')
                     tmp=tmp+'{'+val[0][0]+val[0][1]+'}'
                 tmp=tmp+'}'
 
@@ -124,5 +126,74 @@ class Response:
         except Exception:
             raise Exception('Error')
 
+
+'''
+# Test del codice
+from Response import *
+from ManageDB import *
+
+manager=ManageDB()
+
+val=manager.findClient('','ip','port','1')
+print(val)
+print(len(val))
+if (len(val)!=0):
+    print('e zero')
+else:
+    print('non e zero')
+if (len(manager.findClient('','ip','port','1'))!=0):
+    print('e zero')
+else:
+    print('non e zero')
+val=Response.login(manager,'ip','port')
+print(val)
+'''
+
+# Test del codice
+'''
+from Response import *
+from ManageDB import *
+
+manager=ManageDB()
+
+print('connetto vari client')
+s1=Response.login(manager,'ip1','port1')
+print(s1)
+s2=Response.login(manager,'ip2','port1')
+print(s2)
+s3=Response.login(manager,'ip3','port1')
+print(s3)
+s4=Response.login(manager,'ip4','port1')
+print(s4)
+print('provo a connettere un client gia connesso')
+val=Response.login(manager,'ip1','port1')
+print(val)
+
+print('provo a inserire vari oggetti')
+val=Response.addFile(manager,'file1',s1[4:len(s1)],'pippo')
+print(val)
+val=Response.addFile(manager,'file1',s2[4:len(s2)],'pippo ciao ciao')
+print(val)
+val=Response.addFile(manager,'file2',s4[4:len(s4)],'pluto')
+print(val)
+val=Response.addFile(manager,'file2',s3[4:len(s3)],'pluto cin cin')
+print(val)
+val=Response.addFile(manager,'file3',s4[4:len(s4)],'pippo bau bau')
+print(val)
+
+print('provo a rimuovere un file e poi a eliminarlo di nuovo')
+val=Response.remove(manager,'file1','9EQA4X6X1YBLCHN0')
+print(val)
+val=Response.remove(manager,'file1','9EQA4X6X1YBLCHN0')
+print(val)
+
+print('provo a eseguire una ricerca prima su pippo poi su *')
+print('------1------')
+val=Response.search(manager,'pippo')
+print(val)
+print('-----2----')
+val=Response.search(manager,'*')
+print(val)
+'''
 
 
