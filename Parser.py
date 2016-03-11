@@ -15,28 +15,28 @@ class Parser:
 
         # Se il comando è LOGI suddivido data in questo modo
         if command == 'LOGI':
-            fields[0] = data[5:-6] #IPP2P[55B]
+            fields[0] = data[4:-5] #IPP2P[55B]
             fields[1] = data[-5:] #PP2P[5B]
 
         # Se il comando è ADDF suddivido data in questo modo
         elif command == 'ADDF':
-            fields[0] = data[5:21] #SessionID[16]
-            fields[1] = data[22:38] #FileMD5[16]
+            fields[0] = data[4:20] #SessionID[16]
+            fields[1] = data[20:36] #FileMD5[16]
             fields[2] = data[-100:] #Filename[100]
 
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DELF':
-            fields[0] = data[5:21] #SessionID[16]
+            fields[0] = data[4:20] #SessionID[16]
             fields[1] = data[-16:] #FileMD5[16]
 
         # Se il comando è FIND suddivido data in questo modo
         elif command == 'FIND':
-            fields[0] = data[5:21] #SessionID[16]
+            fields[0] = data[4:20] #SessionID[16]
             fields[1] = data[-20:] #Ricerca[20]
 
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DREG':
-            fields[0] = data[5:21] #SessionID[16]
+            fields[0] = data[4:20] #SessionID[16]
             fields[1] = data[-16:] #FileMD5[16]
 
         # Se il comando è LOGO suddivido data in questo modo
@@ -68,35 +68,35 @@ class Parser:
 
         # Se il comando è LOGI eseguo questi controlli tramite regex
         if command == 'LOGI' and not error:
-            p = re.compile('(\d{3}\.){3}\d{3}\|([\da-fA-F]{4}\:){7}[\da-fA-F]{4}\.\d{5}$')
+            p = re.compile('(\d{3}\.){3}\d{3}\|([\da-fA-F]{4}\:){7}[\da-fA-F]{4}\d{5}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi IPP2P e PP2P non sono formattati correttamente \n')
 
         # Se il comando è ADDF eseguo questi controlli tramite regex
         elif command == 'ADDF' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z]{16}\.[\da-zA-Z\.\ ]{100}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}[\da-zA-Z\.\ ]{100}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID, FileMD5 e Filename non sono formattati correttamente\n')
 
         # Se il comando è DELF eseguo questi controlli tramite regex
         elif command == 'DELF' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z]{16}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e FileMD5 non sono formattati correttamente\n')
 
         # Se il comando è FIND eseguo questi controlli tramite regex
         elif command == 'FIND' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z\.\ ]{20}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z\.\ ]{20}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e Ricerca non sono formattati correttamente\n')
 
         # Se il comando è DREG eseguo questi controlli tramite regex
         elif command == 'DREG' and not error:
-            p = re.compile('[\dA-Z]{16}\.[\da-zA-Z]{16}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e FileMD5 non sono formattati correttamente\n')
