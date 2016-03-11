@@ -80,15 +80,11 @@ class ManageDB:
             c.execute("SELECT COUNT(MD5) FROM FILES WHERE MD5=:COD AND SESSIONID=:ID" , {"COD": md5 , "ID": sessionId})
             num = c.fetchall()
 
-            # Rimuovo il file
-            if num[0][0] != 0:
-                c.execute("DELETE FROM FILES WHERE SESSIONID=:ID AND MD5=:COD" , {"ID": sessionId, "COD": md5} )
-                conn.commit()
+            # Aggiungo  il file se non e' presente
+            if num[0][0] == 0:
+                c.execute("INSERT INTO FILES (NAME, MD5, SESSIONID, NUMDOWN) VALUES (?,?,?,?)" , (name, md5, sessionId, 0))
 
-
-            # Aggiungo il file
-            c.execute("INSERT INTO FILES (NAME, MD5, SESSIONID) VALUES (?,?,?)" , (name, md5, sessionId))
-            # Aggiorna il nome del file
+            # Aggiorno il nome dei file con lo stesso MD5
             c.execute("UPDATE FILES SET NAME=:NOME WHERE MD5=:COD" , {"NOME": name, "COD": md5} )
             conn.commit()
 
@@ -348,7 +344,7 @@ class ManageDB:
             ndown = res[0] + inc
 
             # Aggiorno ilnumero di download
-            c.execute("UPDATE FILES SET NUMDOWN=:NUM WHERE MD5=:COD" , {"NUM": ndown, "COD": md5})
+            c.execute("UPDATE FILES SET NUMDOWN=:NUM WHERE MD5=:COD AND SESSIONID=:ID" , {"NUM": ndown, "COD": md5, "ID": sessionId})
 
             conn.commit()
 
@@ -369,23 +365,66 @@ class ManageDB:
 
 
 '''
+# TEST FILE
 manager = ManageDB()
 
-# TEST FILE
-manager.addClient("1","ip","port") #session ip port
-#print("num download: " + manager.addDownload("2","1",10))
+# Aggiungo un file
+manager.addFile("1","123","Test1")
+num = manager.addDownload("123","1",0)
+print("1) Numero download: {0}" .format(num)) #0
 
-all_rows = manager.findClient('', 'ip', 'port', '1') #session ip port flag
-if len(all_rows)==0:
-    print("NOOOOOOOOOOOOOOOOOOONE")
-if len(all_rows)!=0:
-    print("Non e zero")
-
-
+print("File presenti")
+all_rows = manager.findFile("123")
 for row in all_rows:
-    print('{0} : {0}'.format(row[0], row[1]))
+    print('{0} : {1}'.format(row[0], row[1]))
+print("")
 
+# Incremento il numero di download del file inserito
+print("2) Incremento download 5")
+num = manager.addDownload("123","1",5)
+print("3) Numero download: {0}" .format(num)) #5
+
+print("File presenti")
+all_rows = manager.findFile("123")
+for row in all_rows:
+    print('{0} : {1}'.format(row[0], row[1]))
+print("")
+
+# Cambio il nome del file e incremento i download e incremento i download
+print("4) Cambio nome file esistente da stesso client e incremento i download")
+manager.addFile("1","123","Test2")
+num = manager.addDownload("123","1",5)
+print("5) Numero download: {0}" .format(num)) #10
+
+print("File presenti")
+all_rows = manager.findFile("123")
+for row in all_rows:
+    print('{0} : {1}'.format(row[0], row[1]))
+print("")
+
+# Un altro client inserisce lo stesso file e incremento il num di download del file di quel client
+print("6) Cambio nome file esistente da altro client")
+manager.addFile("2","123","Test3")
+num = manager.addDownload("123","2",7)
+print("7) Numero download: {0}" .format(num)) #7
+
+print("File presenti")
+all_rows = manager.findFile("123")
+for row in all_rows:
+    print('{0} : {1}'.format(row[0], row[1]))
+print("")
+
+# Controllo che il numero di download del primo file inserito non sia cambiato
+print("8) Controllo il numero di download del primo file")
+num = manager.addDownload("123","1",0)
+print("9) Numero download primo file: {0}" .format(num)) #5
+num = manager.addDownload("123","2",0)
+print("9) Numero download secondo file: {0}" .format(num)) #7
+'''
+
+'''
 # TEST CLIENT
+manager = ManageDB()
 manager.addClient("1","192.168.0.2","3000")
 
 print ("Test primo findClient: " )
