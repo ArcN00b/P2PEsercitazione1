@@ -361,6 +361,77 @@ class ManageDB:
             if conn:
                 conn.close()
 
+    # Metodo che per visualizzare la lista di utenti connessi
+    def listCLients(self):
+        try:
+
+            # Creo la connessione al database e creo un cursore ad esso
+            conn = sqlite3.connect("data.db")
+            c = conn.cursor()
+
+            # Prelevo la lista di client connessi
+            c.execute("SELECT * FROM CLIENTS")
+
+            return c.fetchall()
+
+        except sqlite3.Error as e:
+            #In caso di errore stampo l'errore
+            print ("Codice Errore 12 - ListCLients: %s:" % e.args[0])
+            raise Exception()
+
+        finally:
+
+            # Chiudo la connessione
+            if conn:
+                conn.close()
+
+    # Metodo che per visualizzare la lista di utenti connessi
+    def listMD5(self):
+        try:
+
+            # Creo la connessione al database e creo un cursore ad esso
+            conn = sqlite3.connect("data.db")
+            c = conn.cursor()
+
+            # Prelevo la lista di client connessi
+            c.execute("SELECT MD5, SESSIONID, NUMDOWN, NAME FROM FILES")
+
+            return c.fetchall()
+
+        except sqlite3.Error as e:
+            #In caso di errore stampo l'errore
+            print ("Codice Errore 13 - ListMD5: %s:" % e.args[0])
+            raise Exception()
+
+        finally:
+
+            # Chiudo la connessione
+            if conn:
+                conn.close()
+
+    # Metodo che per visualizzare la lista di utenti connessi
+    def mostDownloaded(self):
+        try:
+
+            # Creo la connessione al database e creo un cursore ad esso
+            conn = sqlite3.connect("data.db")
+            c = conn.cursor()
+
+            # Prelevo la lista di client connessi
+            c.execute("SELECT NUMDOWN, MD5, SESSIONID, NAME FROM FILES ORDER BY NUMDOWN")
+
+            return c.fetchall()
+
+        except sqlite3.Error as e:
+            #In caso di errore stampo l'errore
+            print ("Codice Errore 14 - mostDownloaded: %s:" % e.args[0])
+            raise Exception()
+
+        finally:
+
+            # Chiudo la connessione
+            if conn:
+                conn.close()
 
 
 
