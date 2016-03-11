@@ -17,7 +17,6 @@ class MultiServer:
     server_socket4 = None
     server_socket6 = None
 
-
     def __init__(self):
         self._stop = threading.Event()
         self.database = ManageDB()
@@ -50,7 +49,7 @@ class MultiServer:
 
         # Gestisco l'eventuale exception
         except socket.error as msg:
-            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
+            print('Errore durante la creazione del socket IPv6: ' + msg[1] + '\n')
 
         # Metto il server in ascolto per eventuali richieste sui socket appena creati
         self.server_socket4.listen(5)
@@ -64,7 +63,7 @@ class MultiServer:
         while True:
 
             # Per non rendere accept() bloccante uso l'oggetto select con il metodo select() sui socket messi in ascolto
-            input_ready, read_ready, error_ready = select.select([server_socket4, server_socket6], [], [])
+            input_ready, read_ready, error_ready = select.select([self.server_socket4, self.server_socket6], [], [])
 
             # Ora controllo quale dei due socket ha ricevuto una richiesta
             for s in input_ready:
