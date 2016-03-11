@@ -14,7 +14,6 @@ class Worker(threading.Thread):
     def __init__(self, client, database, lock):
         # definizione thread del client
         threading.Thread.__init__(self)
-        self._stop = threading.Event()
         self.client = client
         self.database = database
         self.lock = lock
@@ -25,24 +24,20 @@ class Worker(threading.Thread):
             self.comunication();
         except Exception as e:
             print("errore: ", e);
-            self.stop(self)
-
-    # Funzione utilizzata per fermare il thread Woker
-    def stop(self):
-        self.lock.release()
-        self.client.close()
-        self._stop.set()
+            self.lock.release()
 
     # Funzione che viene eseguita dal thread Worker
     def comunication(self):
 
         # ricezione del dato e immagazzinamento fino al max
-        data = self.client.recv(2048).decode()
+        buffer = self.client.recv(2048)
+
         running = True
 
         # ciclo continua a ricevere i dati
-        while running and len(data) > 0:
+        while running and len(buffer) > 0:
 
+            data = buffer.decode()
             # recupero del comando
             command, fields = Parser.parse(data)
             # risposta da inviare in modo sincronizzato
@@ -113,7 +108,7 @@ class Worker(threading.Thread):
             print("comando inviato")
 
             # ricezione del dato e immagazzinamento fino al max
-            data = self.client.recv(2048).decode()
+            buffer = self.client.recv(2048)
         # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati
