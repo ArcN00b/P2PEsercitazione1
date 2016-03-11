@@ -22,6 +22,7 @@ class Worker(threading.Thread):
             self.comunication();
         except Exception as e:
             print("errore: ", e);
+            self.lock.release();
 
     def comunication(self):
 
