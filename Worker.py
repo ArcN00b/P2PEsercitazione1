@@ -37,9 +37,8 @@ class Worker(threading.Thread):
         # ciclo continua a ricevere i dati
         while running and len(buffer) > 0:
 
-            data = buffer.decode()
             # recupero del comando
-            command, fields = Parser.parse(data)
+            command, fields = Parser.parse(buffer)
             # risposta da inviare in modo sincronizzato
             self.lock.acquire()
             resp = ""

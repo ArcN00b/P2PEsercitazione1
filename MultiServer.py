@@ -1,6 +1,5 @@
 import select
 import socket
-from Monitor import *
 from Worker import *
 from ManageDB import *
 
@@ -9,7 +8,7 @@ from ManageDB import *
 #TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 
 TCP_IP4 = '172.30.7.3'
-TCP_IP6 = 'FC00::7:3'
+TCP_IP6 = 'fc00::7:3'
 
 TCP_PORT = 3000
 
@@ -26,12 +25,6 @@ class MultiServer:
         self.database = ManageDB()
         self.lock = threading.Lock()
         self.thread_list = {}
-
-    # Funzione utilizzata per fermare il thread
-    def stop(self):
-        self.server_socket4.close()
-        self.server_socket6.close()
-        self._stop.set()
 
     def start(self):
 
