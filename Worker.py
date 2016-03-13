@@ -3,6 +3,8 @@ import socket
 import struct
 from Parser import *
 from Response import *
+from ManageDB import *
+
 
 # Costruttore che inizializza gli attributi del Worker
 class Worker(threading.Thread):
@@ -61,37 +63,58 @@ class Worker(threading.Thread):
                 # recupero file name
                 fileName = fields[2]
 
-                resp = Response.addFile(self.database, fileMD5, sessionID, fileName)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.addFile(self.database, fileMD5, sessionID, fileName)
+                else:
+                    # rispondo con 000 per indicare file non aggiunto
+                    resp = "AADD" + "000"
             # DELF
             elif command == "DELF":
                 # recupero sessionID
                 sessionID = fields[0]
                 # recupero del fileMD5
                 fileMD5 = fields[1]
-
-                resp = Response.remove(self.database, fileMD5, sessionID)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.remove(self.database, fileMD5, sessionID)
+                else:
+                    # rispondo con 000 per indicare file non rimosso
+                    resp = "AADD" + "999"
             # FIND
             elif command == "FIND":
                 # recupero sessionID
                 sessionID = fields[0]
                 # recupero campo di ricerca
                 campo = fields[1];
-
-                resp = Response.search(self.database, campo)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.search(self.database, campo)
+                else:
+                    # rispondo con 000 se utente non autorizzato
+                    resp = "AFIN" + "000"
             # DREG
             elif command == "DREG":
                 # recupero del sessionID
                 sessionID = fields[0]
                 # recupero fileMD5
                 fileMD5 = fields[1]
-
-                resp = Response.download(self.database, sessionID, fileMD5)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.download(self.database, sessionID, fileMD5)
+                else:
+                    # utente non presente, nessun file scaricato da aggiornare
+                    resp = "ADRE" + "000"
             # LOGO
             elif command == "LOGO":
                 # recupero sessionID
                 sessionID = fields[0]
-
-                resp = Response.logout(self.database, sessionID)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.logout(self.database, sessionID)
+                else:
+                    # utente non presente nessun file da eliminare
+                    resp = "ALGO" + "000"
 
                 # termine del ciclo
                 running = False
