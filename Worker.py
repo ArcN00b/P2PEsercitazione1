@@ -31,7 +31,7 @@ class Worker(threading.Thread):
 
         # ricezione del dato e immagazzinamento fino al max
         buffer = self.client.recv(2048)
-
+        print("comando ricevuto")
         running = True
 
         # ciclo continua a ricevere i dati
