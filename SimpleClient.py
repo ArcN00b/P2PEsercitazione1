@@ -2,7 +2,7 @@ import socket
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-sock.connect(("127.0.0.1", 5432))
+sock.connect(("127.0.0.1", 3211))
 md5 = ["0001000100010001", "0002000200020002", "0003000300030003", "0004000400040004"]
 
 sock.sendall("LOGI173.010.007.0007|FC30:0000:0000:0000:0000:0000:0004:000112345".encode());

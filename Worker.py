@@ -125,7 +125,7 @@ class Worker(threading.Thread):
 
             # invio della risposta creata controllando che sia valida
             self.lock.release()
-            print(resp+'\r\n')
+            #print(resp+'\r\n')
             if resp is not None:
                 self.client.sendall(resp.encode())
             print("comando inviato")

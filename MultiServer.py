@@ -2,6 +2,7 @@ import select
 import socket
 from Worker import *
 from ManageDB import *
+from Monitor import *
 
 # Insieme di costanti utilizzate nel progetto
 #TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
@@ -10,7 +11,7 @@ from ManageDB import *
 TCP_IP4 = 'localhost'
 TCP_IP6 = '::1'
 
-TCP_PORT = 5432
+TCP_PORT = 3211
 
 class MultiServer:
 

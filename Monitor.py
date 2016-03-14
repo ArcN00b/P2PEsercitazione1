@@ -8,9 +8,9 @@ from Response import *
 class Monitor(threading.Thread):
 
     # Lista di attributi del Monitor
-    thread_list = {}
-    database = None
-    lock = None
+    #thread_list = {}
+    #database = None
+    #lock = None
 
     # Costruttore che inizializza gli attributi del Monitor
     def __init__(self, thread_list, database, lock):
