@@ -372,6 +372,7 @@ class ManageDB:
             # Prelevo la lista di client connessi
             c.execute("SELECT * FROM CLIENTS")
 
+
             return c.fetchall()
 
         except sqlite3.Error as e:

@@ -7,7 +7,7 @@ from ManageDB import *
 # Insieme di costanti utilizzate nel progetto
 TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
-TCP_PORT = 3000
+TCP_PORT = 4000
 
 class MultiServer:
 
@@ -57,14 +57,14 @@ class MultiServer:
         self.server_socket6.listen(5)
 
         # Creo ed eseguo il thread monitor che gestisce, da interfaccia testuale, il server
-        monitor = Monitor(self.thread_list, self.database, self.lock)
-        monitor.run()
+        #monitor = Monitor(self.thread_list, self.database, self.lock)
+        #monitor.run()
 
         # Continuo ad eseguire questo codice
         while True:
-
+            print('sono in attesa\n\r')
             # Per non rendere accept() bloccante uso l'oggetto select con il metodo select() sui socket messi in ascolto
-            input_ready, read_ready, error_ready = select.select([server_socket4, server_socket6], [], [])
+            input_ready, read_ready, error_ready = select.select([self.server_socket4, self.server_socket6], [], [])
 
             # Ora controllo quale dei due socket ha ricevuto una richiesta
             for s in input_ready:

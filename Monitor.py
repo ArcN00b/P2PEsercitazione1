@@ -34,10 +34,9 @@ class Monitor(threading.Thread):
         # Definisco un flag che mi permetta di uscire dal ciclo se necessario
         running = True
         while running:
-
             # Menù con le varie scelte che possono essere compiute
             choose = -1
-            while choose not in (0, 1, 2, 3):
+            while choose not in ('0', '1', '2', '3'):
                 print('---- Interfaccia di gestione del server ----')
                 print('1. Visualizza i client connessi')
                 print('2. Visualizza gli md5 registrati')
@@ -46,7 +45,7 @@ class Monitor(threading.Thread):
                 choose = input('Fai la tua scelta')
 
             # Devo procedere per stampare a video i client connessi
-            if choose == 1:
+            if choose == '1':
 
                 # Intestazione del menù
                 print("\n\n---- Client Connessi ----")
@@ -63,7 +62,7 @@ class Monitor(threading.Thread):
 
 
             # Devo procedere per visualizzare gli md5 registrati
-            elif choose == 2:
+            elif choose == '2':
 
                 # Intestazione del menù
                 print("\n\n---- Lista file ----")
@@ -79,7 +78,7 @@ class Monitor(threading.Thread):
                     print(row)
 
             # Visualizzo la lista di file più scaricati
-            elif choose == 3:
+            elif choose == '3':
 
                 # Intestazione del menù
                 print("\n\n---- File più scaricati ----")
@@ -95,7 +94,7 @@ class Monitor(threading.Thread):
                     print(row)
 
             # Chiudo tutti i thread e chiudo il server
-            elif choose == 0:
+            elif choose == '0':
 
                 # Controllo i thread attivi per rimuovere dalla lista i thread che sono stati chiusi
                 self.thread_list = self.thread_list.intersect(threading.enumerate())
