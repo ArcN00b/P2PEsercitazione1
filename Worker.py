@@ -3,6 +3,8 @@ import socket
 import struct
 from Parser import *
 from Response import *
+from ManageDB import *
+
 
 # Costruttore che inizializza gli attributi del Worker
 class Worker(threading.Thread):
@@ -14,7 +16,6 @@ class Worker(threading.Thread):
     def __init__(self, client, database, lock):
         # definizione thread del client
         threading.Thread.__init__(self)
-        self._stop = threading.Event()
         self.client = client
         self.database = database
         self.lock = lock
@@ -25,26 +26,21 @@ class Worker(threading.Thread):
             self.comunication();
         except Exception as e:
             print("errore: ", e);
-            self.stop(self)
-
-    # Funzione utilizzata per fermare il thread Woker
-    def stop(self):
-        self.lock.release()
-        self.client.close()
-        self._stop.set()
+            self.lock.release()
 
     # Funzione che viene eseguita dal thread Worker
     def comunication(self):
 
         # ricezione del dato e immagazzinamento fino al max
-        data = self.client.recv(2048).decode()
+        buffer = self.client.recv(2048)
+        print("comando ricevuto")
         running = True
 
         # ciclo continua a ricevere i dati
-        while running and len(data) > 0:
+        while running and len(buffer) > 0:
 
             # recupero del comando
-            command, fields = Parser.parse(data)
+            command, fields = Parser.parse(buffer)
             # risposta da inviare in modo sincronizzato
             self.lock.acquire()
             resp = ""
@@ -67,37 +63,58 @@ class Worker(threading.Thread):
                 # recupero file name
                 fileName = fields[2]
 
-                resp = Response.addFile(self.database, fileMD5, sessionID, fileName)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.addFile(self.database, fileMD5, sessionID, fileName)
+                else:
+                    # rispondo con 000 per indicare file non aggiunto
+                    resp = "AADD" + "000"
             # DELF
             elif command == "DELF":
                 # recupero sessionID
                 sessionID = fields[0]
                 # recupero del fileMD5
                 fileMD5 = fields[1]
-
-                resp = Response.remove(self.database, fileMD5, sessionID)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.remove(self.database, fileMD5, sessionID)
+                else:
+                    # rispondo con 000 per indicare file non rimosso
+                    resp = "AADD" + "999"
             # FIND
             elif command == "FIND":
                 # recupero sessionID
                 sessionID = fields[0]
                 # recupero campo di ricerca
                 campo = fields[1];
-
-                resp = Response.search(self.database, campo)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.search(self.database, campo)
+                else:
+                    # rispondo con 000 se utente non autorizzato
+                    resp = "AFIN" + "000"
             # DREG
             elif command == "DREG":
                 # recupero del sessionID
                 sessionID = fields[0]
                 # recupero fileMD5
                 fileMD5 = fields[1]
-
-                resp = Response.download(self.database, sessionID, fileMD5)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.download(self.database, sessionID, fileMD5)
+                else:
+                    # utente non presente, nessun file scaricato da aggiornare
+                    resp = "ADRE" + "000"
             # LOGO
             elif command == "LOGO":
                 # recupero sessionID
                 sessionID = fields[0]
-
-                resp = Response.logout(self.database, sessionID)
+                # controllo se l'utente si e' precedentemente loggato
+                if len(self.database.findClient(sessionID, '', '', '2')) != 0:
+                    resp = Response.logout(self.database, sessionID)
+                else:
+                    # utente non presente nessun file da eliminare
+                    resp = "ALGO" + "000"
 
                 # termine del ciclo
                 running = False
@@ -113,7 +130,7 @@ class Worker(threading.Thread):
             print("comando inviato")
 
             # ricezione del dato e immagazzinamento fino al max
-            data = self.client.recv(2048).decode()
+            buffer = self.client.recv(2048)
         # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati

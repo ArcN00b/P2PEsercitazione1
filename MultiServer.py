@@ -1,13 +1,16 @@
 import select
 import socket
-from Monitor import *
 from Worker import *
 from ManageDB import *
 
 # Insieme di costanti utilizzate nel progetto
-TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
-TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
-TCP_PORT = 4000
+#TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+#TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+
+TCP_IP4 = '172.30.7.3'
+TCP_IP6 = 'fc00::7:3'
+
+TCP_PORT = 3000
 
 class MultiServer:
 
@@ -17,18 +20,11 @@ class MultiServer:
     server_socket4 = None
     server_socket6 = None
 
-
     def __init__(self):
         self._stop = threading.Event()
         self.database = ManageDB()
         self.lock = threading.Lock()
         self.thread_list = {}
-
-    # Funzione utilizzata per fermare il thread
-    def stop(self):
-        self.server_socket4.close()
-        self.server_socket6.close()
-        self._stop.set()
 
     def start(self):
 
@@ -50,19 +46,15 @@ class MultiServer:
 
         # Gestisco l'eventuale exception
         except socket.error as msg:
-            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
+            print('Errore durante la creazione del socket IPv6: ' + msg[1] + '\n')
 
         # Metto il server in ascolto per eventuali richieste sui socket appena creati
         self.server_socket4.listen(5)
         self.server_socket6.listen(5)
 
-        # Creo ed eseguo il thread monitor che gestisce, da interfaccia testuale, il server
-        #monitor = Monitor(self.thread_list, self.database, self.lock)
-        #monitor.run()
-
         # Continuo ad eseguire questo codice
         while True:
-            print('sono in attesa\n\r')
+
             # Per non rendere accept() bloccante uso l'oggetto select con il metodo select() sui socket messi in ascolto
             input_ready, read_ready, error_ready = select.select([self.server_socket4, self.server_socket6], [], [])
 
@@ -73,14 +65,12 @@ class MultiServer:
                 if s == self.server_socket4:
                     client_socket4, address4 = self.server_socket4.accept()
                     client_thread = Worker(client_socket4, self.database, self.lock)
-                    self.thread_list.append(client_thread)
                     client_thread.run()
 
                 # Il client si è collegato tramite socket IPv6, accetto quindi la sua richiesta avviando il worker
                 elif s == self.server_socket6:
                     client_socket6, address6 = self.server_socket6.accept()
                     client_thread = Worker(client_socket6, self.database, self.lock)
-                    self.thread_list.append(client_thread)
                     client_thread.run()
 
 tcpServer = MultiServer()

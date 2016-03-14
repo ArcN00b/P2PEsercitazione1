@@ -372,7 +372,6 @@ class ManageDB:
             # Prelevo la lista di client connessi
             c.execute("SELECT * FROM CLIENTS")
 
-
             return c.fetchall()
 
         except sqlite3.Error as e:
@@ -419,7 +418,7 @@ class ManageDB:
             c = conn.cursor()
 
             # Prelevo la lista di client connessi
-            c.execute("SELECT NUMDOWN, MD5, SESSIONID, NAME FROM FILES ORDER BY NUMDOWN")
+            c.execute("SELECT NUMDOWN, MD5, SESSIONID, NAME FROM FILES ORDER BY NUMDOWN DESC")
 
             return c.fetchall()
 
