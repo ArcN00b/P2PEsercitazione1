@@ -32,14 +32,15 @@ class Worker(threading.Thread):
     def comunication(self):
 
         # ricezione del dato e immagazzinamento fino al max
-        buffer = self.client.recv(2048).decode()
+        data = self.client.recv(2048)
         print("comando ricevuto")
         running = True
 
         # ciclo continua a ricevere i dati
-        while running and len(buffer) > 0:
+        while running and len(data) > 0:
 
             # recupero del comando
+            buffer = data.decode()
             command, fields = Parser.parse(buffer)
             # risposta da inviare in modo sincronizzato
             self.lock.acquire()
@@ -131,7 +132,7 @@ class Worker(threading.Thread):
             print("comando inviato")
 
             # ricezione del dato e immagazzinamento fino al max
-            buffer = self.client.recv(2048).decode()
+            data = self.client.recv(2048)
         # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati

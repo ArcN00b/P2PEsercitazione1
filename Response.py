@@ -84,6 +84,7 @@ class Response:
     @staticmethod
     def search(database,stringa):
         try:
+            stringa=stringa.strip()
             tmp='AFIN'
             if stringa == '*':
                 str=''
@@ -95,7 +96,7 @@ class Response:
             for i in range(0,len(listMd5)):
                 # Variabile che tiene in memoria l'iesimo md5
                 md5=listMd5[i][0]
-                tmp=tmp+'{'+md5
+                tmp=tmp+md5
                 # Ritorna tutti i sessionId e fileName dato un md5
                 listSessionId=database.findFile(md5)
                 # Aggiungo il nome del file alla stringa di ritorno
@@ -107,8 +108,8 @@ class Response:
                     #Metodo che ritorna ip e porta dato un sessioID
                     #val=listSessionId[j][1]
                     val=database.findClient(listSessionId[j][1],'','','2')
-                    tmp=tmp+'{'+val[0][0]+val[0][1]+'}'
-                tmp=tmp+'}'
+                    tmp=tmp+val[0][0]+val[0][1]
+                tmp=tmp
 
             return tmp
         except Exception:

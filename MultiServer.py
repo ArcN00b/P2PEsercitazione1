@@ -8,10 +8,10 @@ from Monitor import *
 #TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 #TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 
-TCP_IP4 = 'localhost'
-TCP_IP6 = '::1'
+TCP_IP4 = '172.30.7.1'
+TCP_IP6 = 'fc00::7:1'
 
-TCP_PORT = 3211
+TCP_PORT = 5000
 
 class MultiServer:
 
