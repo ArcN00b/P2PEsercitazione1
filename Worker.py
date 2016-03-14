@@ -32,7 +32,7 @@ class Worker(threading.Thread):
     def comunication(self):
 
         # ricezione del dato e immagazzinamento fino al max
-        buffer = self.client.recv(2048)
+        buffer = self.client.recv(2048).decode()
         print("comando ricevuto")
         running = True
 
@@ -125,12 +125,13 @@ class Worker(threading.Thread):
 
             # invio della risposta creata controllando che sia valida
             self.lock.release()
+            print(resp+'\r\n')
             if resp is not None:
                 self.client.sendall(resp.encode())
             print("comando inviato")
 
             # ricezione del dato e immagazzinamento fino al max
-            buffer = self.client.recv(2048)
+            buffer = self.client.recv(2048).decode()
         # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati
