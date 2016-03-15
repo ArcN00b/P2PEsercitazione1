@@ -17,18 +17,10 @@ class MultiServer:
     server_socket4 = None
     server_socket6 = None
 
-
     def __init__(self):
-        self._stop = threading.Event()
         self.database = ManageDB()
         self.lock = threading.Lock()
         self.thread_list = {}
-
-    # Funzione utilizzata per fermare il thread
-    def stop(self):
-        self.server_socket4.close()
-        self.server_socket6.close()
-        self._stop.set()
 
     def start(self):
 
@@ -57,14 +49,14 @@ class MultiServer:
         self.server_socket6.listen(5)
 
         # Creo ed eseguo il thread monitor che gestisce, da interfaccia testuale, il server
-        monitor = Monitor(self.thread_list, self.database, self.lock)
+        monitor = Monitor(self.database, self.lock)
         monitor.run()
 
         # Continuo ad eseguire questo codice
         while True:
 
             # Per non rendere accept() bloccante uso l'oggetto select con il metodo select() sui socket messi in ascolto
-            input_ready, read_ready, error_ready = select.select([server_socket4, server_socket6], [], [])
+            input_ready, read_ready, error_ready = select.select([self.server_socket4, self.server_socket6], [], [])
 
             # Ora controllo quale dei due socket ha ricevuto una richiesta
             for s in input_ready:

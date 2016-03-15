@@ -14,24 +14,18 @@ class Worker(threading.Thread):
     def __init__(self, client, database, lock):
         # definizione thread del client
         threading.Thread.__init__(self)
-        self._stop = threading.Event()
         self.client = client
         self.database = database
         self.lock = lock
 
-    # Funzione che lancia il worker e
+    # Funzione che lancia il worker e controlla la chiusura improvvisa
     def run(self):
         try:
             self.comunication();
         except Exception as e:
             print("errore: ", e);
-            self.stop(self)
-
-    # Funzione utilizzata per fermare il thread Woker
-    def stop(self):
-        self.lock.release()
-        self.client.close()
-        self._stop.set()
+            self.lock.release()
+            self.client.close()
 
     # Funzione che viene eseguita dal thread Worker
     def comunication(self):

@@ -366,7 +366,7 @@ class ManageDB:
                 conn.close()
 
     # Metodo che per visualizzare la lista di utenti connessi
-    def listCLients(self):
+    def listClient(self):
         try:
 
             # Creo la connessione al database e creo un cursore ad esso
@@ -416,7 +416,7 @@ class ManageDB:
                 conn.close()
 
     # Metodo che per visualizzare la lista di utenti connessi
-    def mostDownloaded(self):
+    def topDownload(self):
         try:
 
             # Creo la connessione al database e creo un cursore ad esso
