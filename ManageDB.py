@@ -375,6 +375,7 @@ class ManageDB:
 
             # Prelevo la lista di client connessi
             c.execute("SELECT * FROM CLIENTS")
+            conn.commit()
 
             return c.fetchall()
 
@@ -389,7 +390,7 @@ class ManageDB:
             if conn:
                 conn.close()
 
-    # Metodo che per visualizzare la lista di utenti connessi
+    # Metodo che per visualizzare la lista di file registrati
     def listMD5(self):
         try:
 
@@ -397,8 +398,9 @@ class ManageDB:
             conn = sqlite3.connect("data.db")
             c = conn.cursor()
 
-            # Prelevo la lista di client connessi
+            # Prelevo la lista di file registrati
             c.execute("SELECT MD5, SESSIONID, NUMDOWN, NAME FROM FILES")
+            conn.commit()
 
             return c.fetchall()
 
@@ -422,7 +424,8 @@ class ManageDB:
             c = conn.cursor()
 
             # Prelevo la lista di client connessi
-            c.execute("SELECT NUMDOWN, MD5, SESSIONID, NAME FROM FILES ORDER BY NUMDOWN")
+            c.execute("SELECT DISTINCT MD5, NAME, NUMDOWN FROM FILES ORDER BY NUMDOWN")
+            conn.commit()
 
             return c.fetchall()
 
