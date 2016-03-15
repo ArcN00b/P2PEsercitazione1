@@ -365,7 +365,7 @@ class ManageDB:
             if conn:
                 conn.close()
 
-    # Metodo che per visualizzare la lista di utenti connessi
+'''    # Metodo che per visualizzare la lista di utenti connessi
     def listClient(self):
         try:
 
@@ -442,7 +442,7 @@ class ManageDB:
 
 
 
-'''
+
 manager = ManageDB()
 
 # TEST FILE

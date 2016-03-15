@@ -1,5 +1,6 @@
+import select
+import sys
 import threading
-
 
 class Monitor(threading.Thread):
 
@@ -36,7 +37,11 @@ class Monitor(threading.Thread):
                 print('1. Visualizza i client connessi')
                 print('2. Visualizza gli md5 registrati')
                 print('3. Visualizza i file più scaricati')
-                choose = int(input('Fai la tua scelta '))
+                print('Fai la tua scelta ')
+
+                # Leggo in modo non bloccante l'input dell'utente @funziona solo su Linux
+                if sys.stdin in select.select([sys.stdin], [], []):
+                    choose = int(sys.stdin.readline())
 
             # Devo procedere per stampare a video i client connessi
             if choose == 1:

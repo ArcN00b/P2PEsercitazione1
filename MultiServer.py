@@ -32,7 +32,8 @@ class MultiServer:
 
         # Gestisco l'eventuale exception
         except socket.error as msg:
-            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
+            print('Errore durante la creazione del socket IPv4: ' + msg[1])
+            exit(0)
 
         # Creo il socket ipv6, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
         try:
@@ -42,15 +43,12 @@ class MultiServer:
 
         # Gestisco l'eventuale exception
         except socket.error as msg:
-            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
+            print('Errore durante la creazione del socket IPv6: ' + msg[1])
+            exit(0)
 
         # Metto il server in ascolto per eventuali richieste sui socket appena creati
         self.server_socket4.listen(5)
         self.server_socket6.listen(5)
-
-        # Creo ed eseguo il thread monitor che gestisce, da interfaccia testuale, il server
-        monitor = Monitor(self.database, self.lock)
-        #monitor.run()
 
         # Continuo ad eseguire questo codice
         while True:
