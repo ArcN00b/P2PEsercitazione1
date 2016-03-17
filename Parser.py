@@ -27,7 +27,7 @@ class Parser:
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DELF':
             fields[0] = data[4:20] #SessionID[16]
-            fields[1] = data[-32:] #FileMD5[16]
+            fields[1] = data[-32:] #FileMD5[32]
 
         # Se il comando è FIND suddivido data in questo modo
         elif command == 'FIND':
@@ -37,7 +37,7 @@ class Parser:
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DREG':
             fields[0] = data[4:20] #SessionID[16]
-            fields[1] = data[-32:] #FileMD5[16]
+            fields[1] = data[-32:] #FileMD5[32]
 
         # Se il comando è LOGO suddivido data in questo modo
         elif command == 'LOGO':
