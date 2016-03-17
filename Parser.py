@@ -21,13 +21,13 @@ class Parser:
         # Se il comando è ADDF suddivido data in questo modo
         elif command == 'ADDF':
             fields[0] = data[4:20] #SessionID[16]
-            fields[1] = data[20:36] #FileMD5[16]
+            fields[1] = data[20:52] #FileMD5[32]
             fields[2] = data[-100:] #Filename[100]
 
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DELF':
             fields[0] = data[4:20] #SessionID[16]
-            fields[1] = data[-16:] #FileMD5[16]
+            fields[1] = data[-32:] #FileMD5[16]
 
         # Se il comando è FIND suddivido data in questo modo
         elif command == 'FIND':
@@ -37,7 +37,7 @@ class Parser:
         # Se il comando è DELF suddivido data in questo modo
         elif command == 'DREG':
             fields[0] = data[4:20] #SessionID[16]
-            fields[1] = data[-16:] #FileMD5[16]
+            fields[1] = data[-32:] #FileMD5[16]
 
         # Se il comando è LOGO suddivido data in questo modo
         elif command == 'LOGO':
@@ -75,14 +75,14 @@ class Parser:
 
         # Se il comando è ADDF eseguo questi controlli tramite regex
         elif command == 'ADDF' and not error:
-            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}[\da-zA-Z\.\ ]{100}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{32}[\da-zA-Z\.\ ]{100}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID, FileMD5 e Filename non sono formattati correttamente\n')
 
         # Se il comando è DELF eseguo questi controlli tramite regex
         elif command == 'DELF' and not error:
-            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{32}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e FileMD5 non sono formattati correttamente\n')
@@ -96,7 +96,7 @@ class Parser:
 
         # Se il comando è DREG eseguo questi controlli tramite regex
         elif command == 'DREG' and not error:
-            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{16}$')
+            p = re.compile('[\dA-Z]{16}[\da-zA-Z]{32}$')
             if p.search(data) == None:
                 error = True
                 print('Errore, i campi SessionID e FileMD5 non sono formattati correttamente\n')

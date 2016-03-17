@@ -20,13 +20,14 @@ class Worker(threading.Thread):
         self.database = database
         self.lock = lock
 
-    # Funzione che lancia il worker e
+    # Funzione che lancia il worker e controlla la chiusura improvvisa
     def run(self):
         try:
             self.comunication();
         except Exception as e:
             print("errore: ", e);
             self.lock.release()
+            self.client.close()
 
     # Funzione che viene eseguita dal thread Worker
     def comunication(self):
