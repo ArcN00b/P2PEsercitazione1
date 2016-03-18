@@ -8,10 +8,10 @@ from Monitor import *
 #TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 #TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
 
-TCP_IP4 = '172.30.7.1'
-TCP_IP6 = 'fc00::7:1'
+TCP_IP4 = '172.30.7.3'
+TCP_IP6 = 'fc00::7:3'
 
-TCP_PORT = 5000
+TCP_PORT = 3000
 
 class MultiServer:
 
@@ -57,6 +57,7 @@ class MultiServer:
         while True:
 
             # Per non rendere accept() bloccante uso l'oggetto select con il metodo select() sui socket messi in ascolto
+            print("server in ascolto")
             input_ready, read_ready, error_ready = select.select([self.server_socket4, self.server_socket6], [], [])
 
             # Ora controllo quale dei due socket ha ricevuto una richiesta

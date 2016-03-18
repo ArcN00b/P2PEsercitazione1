@@ -23,10 +23,11 @@ class Worker(threading.Thread):
     # Funzione che lancia il worker e controlla la chiusura improvvisa
     def run(self):
         try:
-            self.comunication();
+            self.comunication()
         except Exception as e:
-            print("errore: ", e);
-            self.lock.release()
+            print("errore: ", e)
+            if self.lock.acquired():
+                self.lock.release()
             self.client.close()
 
     # Funzione che viene eseguita dal thread Worker
@@ -34,7 +35,7 @@ class Worker(threading.Thread):
 
         # ricezione del dato e immagazzinamento fino al max
         data = self.client.recv(2048)
-        print("comando ricevuto")
+        print("comando ricevuto: " + str(data))
         running = True
 
         # ciclo continua a ricevere i dati
@@ -130,10 +131,11 @@ class Worker(threading.Thread):
             #print(resp+'\r\n')
             if resp is not None:
                 self.client.sendall(resp.encode())
-            print("comando inviato")
+            print("comando inviato: " + resp)
 
             # ricezione del dato e immagazzinamento fino al max
             data = self.client.recv(2048)
+
         # fine del ciclo
 
         # chiude la connessione quando non ci sono più dati
