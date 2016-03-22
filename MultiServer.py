@@ -1,17 +1,13 @@
 import select
 import socket
+from Monitor import *
 from Worker import *
 from ManageDB import *
-from Monitor import *
 
 # Insieme di costanti utilizzate nel progetto
-#TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
-#TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
-
-TCP_IP4 = '172.30.7.1'
-TCP_IP6 = 'fc00::7:1'
-
-TCP_PORT = 5000
+TCP_IP4 = '127.0.0.1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+TCP_IP6 = '::1'  # Con questo ip il bind viene effettuato su tutte le interfacce di rete
+TCP_PORT = 3000
 
 class MultiServer:
 
@@ -22,7 +18,6 @@ class MultiServer:
     server_socket6 = None
 
     def __init__(self):
-        self._stop = threading.Event()
         self.database = ManageDB()
         self.lock = threading.Lock()
         self.thread_list = {}
@@ -37,7 +32,8 @@ class MultiServer:
 
         # Gestisco l'eventuale exception
         except socket.error as msg:
-            print('Errore durante la creazione del socket IPv4: ' + msg[1] + '\n')
+            print('Errore durante la creazione del socket IPv4: ' + msg[1])
+            exit(0)
 
         # Creo il socket ipv6, imposto l'eventuale riutilizzo, lo assegno all'ip e alla porta
         try:
@@ -47,7 +43,8 @@ class MultiServer:
 
         # Gestisco l'eventuale exception
         except socket.error as msg:
-            print('Errore durante la creazione del socket IPv6: ' + msg[1] + '\n')
+            print('Errore durante la creazione del socket IPv6: ' + msg[1])
+            exit(0)
 
         # Metto il server in ascolto per eventuali richieste sui socket appena creati
         self.server_socket4.listen(5)
