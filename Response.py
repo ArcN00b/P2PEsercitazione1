@@ -12,7 +12,7 @@ class Response:
             tmp='ALGI'
             #il metodo ricerca un client per id e port e se presente ritorna il sessionID altrimenti -1
             if (len(database.findClient('',ip,port,'1')) !=0):
-                tmp=tmp+database.findClient('',ip,port,'1')[0][0];
+                tmp=tmp+database.findClient('',ip,port,'1')[0][0]
             else:
                 #creazione della stringa di sessione in maniera casuale
                 s='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
