@@ -1,6 +1,7 @@
 import threading
 import socket
 import struct
+import time
 from Parser import *
 from Response import *
 from ManageDB import *
@@ -132,7 +133,7 @@ class Worker(threading.Thread):
             if resp is not None:
                 self.client.sendall(resp.encode())
             print("comando inviato: " + resp)
-
+            time.sleep(1)
             # ricezione del dato e immagazzinamento fino al max
             data = self.client.recv(2048)
 
