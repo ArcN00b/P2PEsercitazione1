@@ -339,12 +339,12 @@ class ManageDB:
             c = conn.cursor()
 
             # Prelevo il numero di download
-            c.execute("SELECT NUMDOWN FROM FILES WHERE MD5=:COD AND SESSIONID=:ID" , {"COD": md5 , "ID": sessionId})
+            c.execute("SELECT NUMDOWN FROM FILES WHERE MD5=:COD " , {"COD": md5})
             res = c.fetchone()
             ndown = res[0] + inc
 
             # Aggiorno ilnumero di download
-            c.execute("UPDATE FILES SET NUMDOWN=:NUM WHERE MD5=:COD AND SESSIONID=:ID" , {"NUM": ndown, "COD": md5, "ID": sessionId})
+            c.execute("UPDATE FILES SET NUMDOWN=:NUM WHERE MD5=:COD" , {"NUM": ndown, "COD": md5})
 
             conn.commit()
 
