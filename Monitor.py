@@ -34,6 +34,8 @@ class Monitor(threading.Thread):
             choose = -1
             while choose not in (1, 2, 3):
                 print('\n\n---- Interfaccia di gestione del server ----')
+            while choose not in ('0', '1', '2', '3'):
+                print('---- Interfaccia di gestione del server ----')
                 print('1. Visualizza i client connessi')
                 print('2. Visualizza gli md5 registrati')
                 print('3. Visualizza i file più scaricati')
@@ -44,7 +46,7 @@ class Monitor(threading.Thread):
                     choose = int(sys.stdin.readline())
 
             # Devo procedere per stampare a video i client connessi
-            if choose == 1:
+            if choose == '1':
 
                 # Opero sul database
                 self.lock.acquire()
@@ -66,7 +68,7 @@ class Monitor(threading.Thread):
 
 
             # Devo procedere per visualizzare gli md5 registrati
-            elif choose == 2:
+            elif choose == '2':
 
                 # Opero sul database
                 self.lock.acquire()
@@ -87,7 +89,7 @@ class Monitor(threading.Thread):
                     print('Non ci sono file registrati')
 
             # Visualizzo la lista di file più scaricati
-            elif choose == 3:
+            elif choose == '3':
 
                 # Opero sul database
                 self.lock.acquire()
@@ -95,7 +97,7 @@ class Monitor(threading.Thread):
                 self.lock.release()
 
                 # Stampo a video la lista dei file
-                if len(resp) > 0:
+                if len(resp) > '0':
 
                     # Intestazione del menù
                     print('\n\n---- File più scaricati ----')
